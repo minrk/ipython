@@ -165,19 +165,19 @@ class RectPartitioner2D(RectPartitioner):
 
         size1 = self.subd_hi_ix[1]-self.subd_lo_ix[1]+1
         if self.lower_neighbors[0]>=0:
-            self.in_lower_buffers[0] = zeros(size1, float)
-            self.out_lower_buffers[0] = zeros(size1, float)
+            self.in_lower_buffers[0] = zeros(size1)
+            self.out_lower_buffers[0] = zeros(size1)
         if self.upper_neighbors[0]>=0:
-            self.in_upper_buffers[0] = zeros(size1, float)
-            self.out_upper_buffers[0] = zeros(size1, float)
+            self.in_upper_buffers[0] = zeros(size1)
+            self.out_upper_buffers[0] = zeros(size1)
 
         size0 = self.subd_hi_ix[0]-self.subd_lo_ix[0]+1
         if self.lower_neighbors[1]>=0:
-            self.in_lower_buffers[1] = zeros(size0, float)
-            self.out_lower_buffers[1] = zeros(size0, float)
+            self.in_lower_buffers[1] = zeros(size0)
+            self.out_lower_buffers[1] = zeros(size0)
         if self.upper_neighbors[1]>=0:
-            self.in_upper_buffers[1] = zeros(size0, float)
-            self.out_upper_buffers[1] = zeros(size0, float)
+            self.in_upper_buffers[1] = zeros(size0)
+            self.out_upper_buffers[1] = zeros(size0)
 
     def get_num_loc_cells(self):
         return [self.subd_hi_ix[0]-self.subd_lo_ix[0],\
@@ -220,7 +220,7 @@ class MPIRectPartitioner2D(RectPartitioner2D):
             else:
                 for i in xrange(0,loc_ny+1):
                     self.out_lower_buffers[0][i] = solution_array[1,i]
-            mpi.Isend(self.out_lower_buffers[0], lower_x_neigh)
+            mpi.Send(self.out_lower_buffers[0], lower_x_neigh)
             
         if upper_x_neigh>-1:
             mpi.Recv(self.in_upper_buffers[0], upper_x_neigh)
@@ -231,7 +231,7 @@ class MPIRectPartitioner2D(RectPartitioner2D):
                 for i in xrange(0,loc_ny+1):
                     solution_array[loc_nx,i] = self.in_upper_buffers[0][i]
                     self.out_upper_buffers[0][i] = solution_array[loc_nx-1,i]
-            mpi.Isend(self.out_upper_buffers[0], upper_x_neigh)
+            mpi.Send(self.out_upper_buffers[0], upper_x_neigh)
 
         if lower_x_neigh>-1:
             mpi.Recv(self.in_lower_buffers[0], lower_x_neigh)
@@ -248,7 +248,7 @@ class MPIRectPartitioner2D(RectPartitioner2D):
             else:
                 for i in xrange(0,loc_nx+1):
                     self.out_lower_buffers[1][i] = solution_array[i,1]
-            mpi.Isend(self.out_lower_buffers[1], lower_y_neigh)
+            mpi.Send(self.out_lower_buffers[1], lower_y_neigh)
             
         if upper_y_neigh>-1:
             mpi.Recv(self.in_upper_buffers[1], upper_y_neigh)
@@ -259,7 +259,7 @@ class MPIRectPartitioner2D(RectPartitioner2D):
                 for i in xrange(0,loc_nx+1):
                     solution_array[i,loc_ny] = self.in_upper_buffers[1][i]
                     self.out_upper_buffers[1][i] = solution_array[i,loc_ny-1]
-            mpi.Isend(self.out_upper_buffers[1], upper_y_neigh)
+            mpi.Send(self.out_upper_buffers[1], upper_y_neigh)
             
         if lower_y_neigh>-1:
             mpi.Recv(self.in_lower_buffers[1], lower_y_neigh)

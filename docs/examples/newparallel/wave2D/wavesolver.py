@@ -14,6 +14,8 @@ import time
 
 from numpy import exp, zeros, newaxis, sqrt, arange
 
+from IPython.utils.timing import clock2
+
 def iseq(start=0, stop=None, inc=1):
     """
     Generate integers from start to (and including!) stop,
@@ -94,7 +96,7 @@ class WaveSolver(object):
             dt = (1/float(c))*(1/sqrt(1/dx**2 + 1/dy**2))  # max time step
         Cx2 = (c*dt/dx)**2;  Cy2 = (c*dt/dy)**2;  dt2 = dt**2  # help variables
 
-        u = zeros((nx+1,ny+1))   # solution array
+        u = zeros((nx+1,ny+1), float)   # solution array
         u_1 = u.copy()           # solution at t-dt
         u_2 = u.copy()           # solution at t-2*dt
 
@@ -165,7 +167,10 @@ class WaveSolver(object):
     
     
     def solve(self, tstop, dt=-1, user_action=None, verbose=False, final_test=False):
-        t0=time.time()
+        # wall tic
+        wtic=time.time()
+        # user/sys tic
+        utic, stic = clock2()
         f=self.f
         c=self.c
         bc=self.bc
@@ -250,18 +255,24 @@ class WaveSolver(object):
             # update data structures for next step
             u_2, u_1, u = u_1, u, u_2
 
-        t1 = time.time()
+        # wall toc
+        wtoc=time.time()
+        # user/sys toc
+        utoc, stoc = clock2()
+        
         print 'my_id=%2d, dt=%g, %s version, slice_copy=%s, net Wtime=%g'\
               %(partitioner.my_id,dt,implementation['inner'],\
-                partitioner.slice_copy,t1-t0)
+                partitioner.slice_copy,wtoc-wtic)
         # save the us
         self.us = u,u_1,u_2
         # check final results; compute discrete L2-norm of the solution
         if final_test:
-            loc_res = 0.0
-            for i in iseq(start=1, stop=nx-1):
-                for j in iseq(start=1, stop=ny-1):
-                    loc_res += u_1[i,j]**2
-            return loc_res
-        return dt
+            loc_res = (u_1[1:-1,1:-1]**2).sum()
+            # for i in iseq(start=1, stop=nx-1):
+            #     for j in iseq(start=1, stop=ny-1):
+            #         loc_res += u_1[i,j]**2
+        else:
+            loc_res = -1
+        # return
+        return wtoc-wtic, utoc-utic, stoc-stic, loc_res
 

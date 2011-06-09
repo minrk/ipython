@@ -911,7 +911,7 @@ class PBSEngineSetLauncher(PBSLauncher):
 
 class SGELauncher(PBSLauncher):
     """Sun GridEngine is a PBS clone with slightly different syntax"""
-    job_array_regexp = CUnicode('#$$\W+-t\W+[\w\d\-\$]+')
+    job_array_regexp = CUnicode('#\$\$\W+\-t')
     job_array_template = CUnicode('#$$ -t 1-$n')
     queue_regexp = CUnicode('#$$\W+-q\W+\$?\w+')
     queue_template = CUnicode('#$$ -q $queue')

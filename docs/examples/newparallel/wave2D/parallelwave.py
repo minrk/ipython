@@ -52,6 +52,9 @@ def wave_saver(u, x, y, t):
     u_hist.append(1.0*u)
     
 
+def print_times(name, times):
+    mean = 1.0*sum(times) / len(times)
+    print "%s time: mean: %.3f, min: %.3f, max: %.3f"%(name, mean, min(times), max(times))
 # main program:
 if __name__ == '__main__':
     
@@ -106,7 +109,7 @@ if __name__ == '__main__':
     num_procs = len(rc.ids)
     
     if partition is None:
-        partition = [num_procs,1]
+        partition = [1,num_procs]
     else:
         num_procs = min(num_procs, partition[0]*partition[1])
     
@@ -170,16 +173,22 @@ if __name__ == '__main__':
 
         # run first with element-wise Python operations for each cell
         t0 = time.time()
-        ar = view.apply_async(_solve, tstop, dt=0, verbose=True, final_test=final_test, user_action=user_action)
+        ar = view.apply_async(_solve, tstop, dt=0, verbose=False, final_test=final_test, user_action=user_action)
+        # this sum is performed element-wise as results finish
+        # the L2 norm (RMS) of the result:
+        s = sum([ r[-1] for r in ar ])
         if final_test:
-            # this sum is performed element-wise as results finish
-            s = sum(ar)
-            # the L2 norm (RMS) of the result:
             norm = sqrt(s/num_cells)
         else:
             norm = -1
         t1 = time.time()
+        # extract times:
+        times = [ r[:-1] for r in ar ]
+        walltimes, usertimes, systimes = zip(*times)
         print 'scalar inner-version, Wtime=%g, norm=%g'%(t1-t0, norm)
+        print_times('wall', walltimes)
+        print_times('user', usertimes)
+        print_times('sys', systimes)
     
     # run again with faster numpy-vectorized inner implementation:
     impl['inner'] = 'vectorized'
@@ -188,16 +197,22 @@ if __name__ == '__main__':
 
     t0 = time.time()
     
-    ar = view.apply_async(_solve, tstop, dt=0, verbose=True, final_test=final_test)#, user_action=wave_saver)
+    ar = view.apply_async(_solve, tstop, dt=0, verbose=False, final_test=final_test)#, user_action=wave_saver)
+    # this sum is performed element-wise as results finish
+    # the L2 norm (RMS) of the result:
+    s = sum([ r[-1] for r in ar ])
     if final_test:
-        # this sum is performed element-wise as results finish
-        s = sum(ar)
-        # the L2 norm (RMS) of the result:
         norm = sqrt(s/num_cells)
     else:
         norm = -1
     t1 = time.time()
+    # extract times:
+    times = [ r[:-1] for r in ar ]
+    walltimes, usertimes, systimes = zip(*times)
     print 'vector inner-version, Wtime=%g, norm=%g'%(t1-t0, norm)
+    print_times('wall', walltimes)
+    print_times('user', usertimes)
+    print_times('sys', systimes)
     
     # if ns.save is True, then u_hist stores the history of u as a list
     # If the partion scheme is Nx1, then u can be reconstructed via 'gather':

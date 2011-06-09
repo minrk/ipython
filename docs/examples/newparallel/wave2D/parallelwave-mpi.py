@@ -153,6 +153,7 @@ if __name__ == '__main__':
     view.execute('mpi.barrier()')
     # setup remote solvers
     view.apply_sync(setup_solver, I,f,c,bc,Lx,Ly,partitioner=Reference('partitioner'), dt=0,implementation=impl)
+    # raise SystemExit(1)
 
     # lambda for calling solver.solve:
     _solve = lambda *args, **kwargs: solver.solve(*args, **kwargs)
@@ -161,7 +162,7 @@ if __name__ == '__main__':
         impl['inner'] = 'scalar'
         # run first with element-wise Python operations for each cell
         t0 = time.time()
-        ar = view.apply_async(_solve, tstop, dt=0, verbose=True, final_test=final_test, user_action=user_action)
+        ar = view.apply_async(_solve, tstop, dt=0, final_test=final_test, user_action=user_action)
         if final_test:
             # this sum is performed element-wise as results finish
             s = sum(ar)
@@ -179,15 +180,21 @@ if __name__ == '__main__':
     
     # run again with numpy vectorized inner-implementation
     t0 = time.time()
-    ar = view.apply_async(_solve, tstop, dt=0, verbose=True, final_test=final_test)#, user_action=wave_saver)
+    ar = view.apply_async(_solve, tstop, dt=0, final_test=final_test)#, user_action=wave_saver)
+    # this sum is performed element-wise as results finish
+    # the L2 norm (RMS) of the result:
+    s = sum([ r[-1] for r in ar ])
     if final_test:
-        # this sum is performed element-wise as results finish
-        s = sum(ar)
-        # the L2 norm (RMS) of the result:
         norm = sqrt(s/num_cells)
     else:
         norm = -1
     t1 = time.time()
+    # extract times:
+    times = [ r[:-1] for r in ar ]
+    walltimes, usertimes, systimes = zip(*times)
+    print walltimes
+    print usertimes
+    print systimes
     print 'vector inner-version, Wtime=%g, norm=%g'%(t1-t0, norm)
     
     # if ns.save is True, then u_hist stores the history of u as a list
