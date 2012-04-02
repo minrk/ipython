@@ -576,6 +576,39 @@ var IPython = (function (IPython) {
             this.append_stream(json);
         };
         this.outputs.push(json);
+        
+        this.elide_outputs();
+    };
+
+
+    CodeCell.prototype.elide_outputs = function() {
+        var that=this;
+        var outputdiv = this.element.find('div.output');
+        var h = outputdiv.height();
+        var hlimit = $('div#notebook').height();
+        console.log(h);
+        console.log(hlimit);
+        if (h > hlimit) {
+            console.log('elide');
+            // outputdiv.height(hlimit);
+            outputdiv.css("overflow", "hidden");
+            // outputdiv.css("clip", "rect(" + (h-hlimit) + ", 100%, " + hlimit + ", 0)");
+            outputdiv.css("clip", "rect(100px,200px,200px,10px)");
+            outputdiv.dblclick(function() {that.unelide_outputs()});
+        } else {
+            console.log('no-elide');
+            outputdiv.dblclick(function() {that.elide_outputs()});
+        };
+    };
+
+
+    CodeCell.prototype.unelide_outputs = function() {
+        var that=this;
+        console.log('unelide');
+        var outputdiv = this.element.find('div.output');
+        // outputdiv.height('auto');
+        outputdiv.css("clip", "");
+        outputdiv.dblclick(function() {that.elide_outputs()});
     };
 
 
