@@ -576,6 +576,35 @@ var IPython = (function (IPython) {
             this.append_stream(json);
         };
         this.outputs.push(json);
+        
+        this.elide_output();
+    };
+
+
+    CodeCell.prototype.elide_output = function () {
+        var that=this;
+        var outdiv = this.element.find("div.output");
+        var h = outdiv.height();
+        var hlimit = $("div#notebook").height();
+        if ((h+100) > hlimit) {
+            outdiv.height(hlimit-100);
+            outdiv.css("overflow", "scroll");
+            outdiv.css("border", "2px solid #ccc");
+            outdiv.scrollTop(h+100-hlimit);
+            outdiv.dblclick(function(){that.unelide_output()});
+        }
+    };
+
+
+    CodeCell.prototype.unelide_output = function () {
+        var that=this;
+        var outdiv = this.element.find("div.output");
+        var h = outdiv.height();
+        var hlimit = $("div#notebook").height();
+        outdiv.height("auto");
+        outdiv.css("border", "none");
+        outdiv.css("overflow", "");
+        outdiv.dblclick(function(){that.elide_output()});
     };
 
 

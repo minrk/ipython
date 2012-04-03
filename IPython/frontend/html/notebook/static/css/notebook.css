@@ -157,6 +157,7 @@ div.input_prompt {
 div.output {
     /* This is a spacer between the input and output of each cell */
     margin-top: 5px;
+    border-radius: 3px;
 }
 
 div.output_prompt {
