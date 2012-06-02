@@ -319,6 +319,27 @@ class Hub(SessionFactory):
     client_info: dict of zmq connection information for engines to connect
                 to the queues.
     """
+    
+    store_request_buffers = Bool(True, config=True,
+        """Store raw data necessary for resubmitting apply_requests in the Task Database.
+        
+        If you do not need to use the Client to resubmit apply_requests,
+        then you can safely disable this feature.
+        """
+    )
+    store_result_buffers = Bool(True, config=True,
+        """Store raw data necessary for reconstructing results in the Task Database.
+        
+        If you do not need to fetch results from the Hub (those not from your Client object)
+        then you can safely disable this feature.
+        """
+    )
+    def _store_result_buffers_changed(self, name, old, new):
+        """Without storing results, resubmit makes no sense"""
+        if not new:
+            self.store_request_buffers = False
+    
+    
     # internal data structures:
     ids=Set() # engine IDs
     keytable=Dict()
@@ -565,6 +586,10 @@ class Hub(SessionFactory):
             self.log.debug("queue::    valid are: %r", self.by_ident.keys())
             return
         record = init_record(msg)
+
+        if not self.store_request_buffers:
+            record['buffers'] = []
+
         msg_id = record['msg_id']
         self.log.info("queue::client %r submitted request %r to %s", client_id, msg_id, eid)
         # Unicode in records
@@ -640,7 +665,8 @@ class Hub(SessionFactory):
             'completed' : completed
         }
 
-        result['result_buffers'] = msg['buffers']
+        if self.store_result_buffers:
+            result['result_buffers'] = msg['buffers']
         try:
             self.db.update_record(msg_id, result)
         except Exception:
@@ -660,6 +686,9 @@ class Hub(SessionFactory):
                     client_id, msg, exc_info=True)
             return
         record = init_record(msg)
+
+        if not self.store_request_buffers:
+            record['buffers'] = []
 
         record['client_uuid'] = client_id.decode('ascii')
         record['queue'] = 'task'
@@ -744,8 +773,10 @@ class Hub(SessionFactory):
                 'received' : datetime.now(),
                 'engine_uuid': engine_uuid,
             }
-
-            result['result_buffers'] = msg['buffers']
+            
+            if self.store_result_buffers:
+                result['result_buffers'] = msg['buffers']
+            
             try:
                 self.db.update_record(msg_id, result)
             except Exception:
@@ -1121,6 +1152,12 @@ class Hub(SessionFactory):
         """Resubmit one or more tasks."""
         def finish(reply):
             self.session.send(self.query, 'resubmit_reply', content=reply, ident=client_id)
+        
+        try:
+            if not self.store_request_buffers:
+                raise ValueError("Hub has disabled task resubmission.")
+        except Exception:
+            return finish(error.wrap_exception())
 
         content = msg['content']
         msg_ids = content['msg_ids']
@@ -1209,6 +1246,15 @@ class Hub(SessionFactory):
 
     def get_results(self, client_id, msg):
         """Get the result of 1 or more messages."""
+
+        try:
+            if not self.store_request_buffers:
+                raise ValueError("Hub has disabled result retrieval.")
+        except Exception:
+            self.session.send(self.query, "result_reply", content=error.wrap_exception(),
+                                                    parent=msg, ident=client_id)
+            return
+
         content = msg['content']
         msg_ids = sorted(set(content['msg_ids']))
         statusonly = content.get('status_only', False)
