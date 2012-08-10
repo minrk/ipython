@@ -309,7 +309,7 @@ class PrefilterManager(Configurable):
             # previously typed some whitespace that started a continuation
             # prompt, he can break out of that loop with just an empty line.
             # This is how the default python prompt works.
-            return ''
+            return u''
 
         # At this point, we invoke our transformers.
         if not continue_prompt or (continue_prompt and self.multi_line_specials):
@@ -354,7 +354,7 @@ class PrefilterManager(Configurable):
         # communicate downstream which line is first and which are continuation
         # ones.
         if len(llines) > 1:
-            out = '\n'.join([self.prefilter_line(line, lnum>0)
+            out = u'\n'.join([self.prefilter_line(line, lnum>0)
                              for lnum, line in enumerate(llines) ])
         else:
             out = self.prefilter_line(llines[0], continue_prompt)

@@ -325,7 +325,7 @@ class InputSplitter(object):
         """Reset the input buffer and associated state."""
         self.indent_spaces = 0
         self._buffer[:] = []
-        self.source = ''
+        self.source = u''
         self.code = None
         self._is_complete = False
         self._full_dedent = False
