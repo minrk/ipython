@@ -126,7 +126,7 @@ url = 'http://ipython.org'
 
 download_url = 'https://github.com/ipython/ipython/downloads'
 
-platforms = ['Linux','Mac OSX','Windows XP/2000/NT/Vista/7']
+platforms = ['Linux','Mac OSX','Windows Vista/7/8']
 
 keywords = ['Interactive','Interpreter','Shell','Parallel','Distributed',
             'Web-based computing', 'Qt console', 'Embedding']
@@ -140,8 +140,8 @@ classifiers = [
     'Programming Language :: Python :: 2.6',
     'Programming Language :: Python :: 2.7',
     'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.1',
     'Programming Language :: Python :: 3.2',
+    'Programming Language :: Python :: 3.3',
     'Topic :: System :: Distributed Computing',
     'Topic :: System :: Shells'
     ]
