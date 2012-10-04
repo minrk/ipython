@@ -125,8 +125,9 @@ var IPython = (function (IPython) {
         var that = this;
         this.stop_channels();
         var ws_url = this.ws_url + this.kernel_url;
+        ws_url = ws_url.replace('http', 'ws');
         console.log("Starting SockJS:", ws_url);
-        this.shell_channel = new SockJS(ws_url + "/sock");
+        this.shell_channel = new WebSocket(ws_url + "/sock/websocket");
         send_cookie = function(){
             this.send(document.cookie);
         };
