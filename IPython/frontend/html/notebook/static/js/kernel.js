@@ -125,9 +125,10 @@ var IPython = (function (IPython) {
         var that = this;
         this.stop_channels();
         var ws_url = this.ws_url + this.kernel_url;
+        ws_url = ws_url.replace('http', 'ws')
         console.log("Starting WS:", ws_url);
-        this.shell_channel = new this.WebSocket(ws_url + "/shell");
-        this.iopub_channel = new this.WebSocket(ws_url + "/iopub");
+        this.shell_channel = new this.WebSocket(ws_url + "/shell/websocket");
+        this.iopub_channel = new this.WebSocket(ws_url + "/iopub/websocket");
         send_cookie = function(){
             this.send(document.cookie);
         };
