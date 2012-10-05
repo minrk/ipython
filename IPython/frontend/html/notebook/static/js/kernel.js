@@ -130,7 +130,7 @@ var IPython = (function (IPython) {
         this.shell_channel = new this.WebSocket(ws_url + "/shell/websocket");
         this.iopub_channel = new this.WebSocket(ws_url + "/iopub/websocket");
         send_cookie = function(){
-            this.send(document.cookie);
+            this.send(document.cookie || ' ');
         };
         var already_called_onclose = false; // only alert once
         ws_closed_early = function(evt){
