@@ -16,6 +16,7 @@ __docformat__ = "restructuredtext en"
 #-------------------------------------------------------------------------------
 
 import copy
+import inspect
 import logging
 import sys
 from types import FunctionType
@@ -124,11 +125,7 @@ class CannedClass(CannedObject):
         for k,v in cls.__dict__.items():
             if k not in ('__weakref__', '__dict__'):
                 self._canned_dict[k] = can(v)
-        if self.old_style:
-            mro = []
-        else:
-            mro = cls.mro()
-        
+        mro = inspect.getmro(cls)
         self.parents = [ can(c) for c in mro[1:] ]
         self.buffers = []
 
