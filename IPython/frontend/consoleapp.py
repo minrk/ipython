@@ -88,6 +88,7 @@ aliases = dict(ipkernel_aliases)
 
 # also scrub aliases from the frontend
 app_aliases = dict(
+    transport = 'IPythonConsoleApp.transport',
     hb = 'IPythonConsoleApp.hb_port',
     shell = 'IPythonConsoleApp.shell_port',
     iopub = 'IPythonConsoleApp.iopub_port',
@@ -95,7 +96,6 @@ app_aliases = dict(
     ip = 'IPythonConsoleApp.ip',
     existing = 'IPythonConsoleApp.existing',
     f = 'IPythonConsoleApp.connection_file',
-
 
     ssh = 'IPythonConsoleApp.sshserver',
 )
