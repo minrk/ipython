@@ -557,7 +557,13 @@ class TerminalInteractiveShell(InteractiveShell):
                 except:
                     self.showtraceback()
             try:
+                crl = self.readline.crl
+                crl.rl_catch_signals = 1
+                # crl.rl_set_signals()
+                import signal
+                # handler = signal.signal(signal.SIGINT, signal.SIG_IGN)
                 line = self.raw_input(prompt)
+                # signal.signal(signal.SIGINT, handler)
                 if self.exit_now:
                     # quick exit on sys.std[in|out] close
                     break
@@ -568,11 +574,46 @@ class TerminalInteractiveShell(InteractiveShell):
                 #double-guard against keyboardinterrupts during kbdint handling
                 try:
                     self.write('\nKeyboardInterrupt\n')
+                    
                     source_raw = self.input_splitter.source_raw_reset()[1]
                     hlen_b4_cell = \
                         self._replace_rlhist_multiline(source_raw, hlen_b4_cell)
+                    if self.has_readline:
+                        crl = self.readline.crl
+                        if self.readline.get_line_buffer():
+                            self.write("\ncleaning up\n")
+                            crl.rl_reset_after_signal()
+                            crl.rl_on_new_line()
+                            crl.rl_reset_line_state()
+                            crl.rl_free_line_state()
+                            crl.rl_cleanup_after_signal()
+                            crl.rl_initialize()
+                            self.write("\nok: %r\n" % self.readline.get_line_buffer())
+                            # while True:
+                            #     try:
+                            #         self.raw_input_original('Residue left in readline, Enter to continue ')
+                            #     except KeyboardInterrupt:
+                            #         print("\nDon't interrupt me, I mean it!")
+                            #     else:
+                            #         break
+                        # n = len()
+                        # print ('rl_deleting', n)
+                        #     # self.readline.crl.rl_delete_text(0, n)
+                        #     # self.readline.crl.rl_insert_text('hi')
+                        #     # print (repr(self.readline.get_line_buffer()))
+                        #     # print (repr(sys.stdin.readline()))
+                        #     print ()
+#                            sys.stdin.seek(1)
+                        # self.readline.crl.rl_reset_line_state()
+                        # self.readline.crl.rl_delete()
+                        # self.readline.crl.rl_kill_text(0, n)
+                        # self.readline.crl.rl_forced_update_display()
+                        # self.readline.crl.rl_clear_message()
+                        # n = len(self.readline.get_line_buffer())
+                        # print ('rl_deleted', n)
                     more = False
                 except KeyboardInterrupt:
+                    # print ('do')
                     pass
             except EOFError:
                 if self.autoindent:

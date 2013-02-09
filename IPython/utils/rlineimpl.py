@@ -104,6 +104,11 @@ if uses_libedit and sys.platform == 'darwin':
         "location on your PYTHONPATH (even --user comes after lib-dyload).",
         "*"*78]),
         RuntimeWarning)
+        
+rl_so = '/Library/Python/2.7/site-packages/readline-6.2.4.1-py2.7-macosx-10.7-intel.egg/readline.so'
+import ctypes
+crl = ctypes.CDLL(rl_so)
+rl_delete = crl.rl_delete
 
 # the clear_history() function was only introduced in Python 2.4 and is
 # actually optional in the readline API, so we must explicitly check for its
