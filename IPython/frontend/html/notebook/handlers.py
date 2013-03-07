@@ -658,6 +658,9 @@ class NotebookHandler(AuthenticatedHandler):
         nbm = self.application.notebook_manager
         format = self.get_argument('format', default='json')
         name = self.get_argument('name', default=None)
+        print 'v-'*30
+        print repr(self.request.body)
+        print '^-'*30
         nbm.save_notebook(notebook_id, self.request.body, name=name, format=format)
         self.set_status(204)
         self.finish()

@@ -1276,7 +1276,7 @@ var IPython = (function (IPython) {
             cache : false,
             type : "PUT",
             data : JSON.stringify(data),
-            headers : {'Content-Type': 'application/json'},
+            headers : {'Content-Type': 'application/json; charset=UTF-8'},
             success : $.proxy(this.save_notebook_success,this),
             error : $.proxy(this.save_notebook_error,this)
         };

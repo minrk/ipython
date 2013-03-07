@@ -58,7 +58,14 @@ class JSONWriter(NotebookWriter):
         kwargs['separators'] = (',',': ')
         if kwargs.pop('split_lines', True):
             nb = split_lines(copy.deepcopy(nb))
-        return py3compat.str_to_unicode(json.dumps(nb, **kwargs), 'utf-8')
+        s = py3compat.str_to_unicode(json.dumps(nb, **kwargs), 'utf-8')
+        try:
+            print nb.worksheets[0].cells[:1]
+            print s[s.find('cells'):]
+        except Exception:
+            pass
+        
+        return s
     
 
 _reader = JSONReader()
