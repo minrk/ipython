@@ -52,6 +52,9 @@ else:
 class IPythonWidget(FrontendWidget):
     """ A FrontendWidget for an IPython kernel.
     """
+    
+    def _is_from_this_session(self, msg):
+        return True
 
     # If set, the 'custom_edit_requested(str, int)' signal will be emitted when
     # an editor is needed for a file. This overrides 'editor' and 'editor_line'
