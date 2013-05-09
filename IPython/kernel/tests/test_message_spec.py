@@ -220,7 +220,7 @@ class ExecuteInput(Reference):
     execution_count = Integer()
 
 
-PyErr = ExecuteReplyError
+Error = ExecuteReplyError
 
 
 class Stream(Reference):
@@ -257,7 +257,7 @@ references = {
     'kernel_info_reply': KernelInfoReply(),
     'execute_input' : ExecuteInput(),
     'execute_result' : ExecuteResult(),
-    'pyerr' : PyErr(),
+    'error' : Error(),
     'stream' : Stream(),
     'display_data' : DisplayData(),
 }
@@ -337,8 +337,8 @@ def test_execute_error():
     yield nt.assert_equal(reply['status'], 'error')
     yield nt.assert_equal(reply['ename'], 'ZeroDivisionError')
     
-    pyerr = KC.iopub_channel.get_msg(timeout=2)
-    for tst in validate_message(pyerr, 'pyerr', msg_id):
+    error = KC.iopub_channel.get_msg(timeout=2)
+    for tst in validate_message(error, 'error', msg_id):
         yield tst
 
 

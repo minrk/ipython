@@ -51,7 +51,7 @@ class Console(code.InteractiveConsole):
         sys.ps3 = 'Out : '
         # Build dict of handlers for message types
         self.handlers = {}
-        for msg_type in ['execute_input', 'execute_result', 'pyerr', 'stream']:
+        for msg_type in ['execute_input', 'execute_result', 'error', 'stream']:
             self.handlers[msg_type] = getattr(self, 'handle_%s' % msg_type)
 
     def handle_execute_input(self, omsg):
@@ -70,15 +70,15 @@ class Console(code.InteractiveConsole):
             print('[Out from %s]' % omsg.parent_header.username)
             print(omsg.content.data)
 
-    def print_pyerr(self, err):
+    def print_error(self, err):
         print(err.etype,':', err.evalue, file=sys.stderr)
         print(''.join(err.traceback), file=sys.stderr)
 
-    def handle_pyerr(self, omsg):
+    def handle_error(self, omsg):
         if omsg.parent_header.session == self.session.session:
             return
         print('[ERR from %s]' % omsg.parent_header.username, file=sys.stderr)
-        self.print_pyerr(omsg.content)
+        self.print_error(omsg.content)
 
     def handle_stream(self, omsg):
         if omsg.content.name == 'stdout':
@@ -107,7 +107,7 @@ class Console(code.InteractiveConsole):
         if rep is None:
             return
         if rep.content.status == 'error':
-            self.print_pyerr(rep.content)
+            self.print_error(rep.content)
         elif rep.content.status == 'aborted':
             print("ERROR: ABORTED", file=sys.stderr)
             ab = self.messages[rep.parent_header.msg_id].content
