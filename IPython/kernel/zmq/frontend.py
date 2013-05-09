@@ -51,10 +51,10 @@ class Console(code.InteractiveConsole):
         sys.ps3 = 'Out : '
         # Build dict of handlers for message types
         self.handlers = {}
-        for msg_type in ['pyin', 'pyout', 'pyerr', 'stream']:
+        for msg_type in ['execute_input', 'pyout', 'pyerr', 'stream']:
             self.handlers[msg_type] = getattr(self, 'handle_%s' % msg_type)
 
-    def handle_pyin(self, omsg):
+    def handle_execute_input(self, omsg):
         if omsg.parent_header.session == self.session.session:
             return
         c = omsg.content.code.rstrip()

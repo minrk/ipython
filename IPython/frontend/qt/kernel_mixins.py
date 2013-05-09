@@ -85,8 +85,8 @@ class QtIOPubChannelMixin(ChannelQObject):
     # Emitted when a message of type 'stream' is received.
     stream_received = QtCore.Signal(object)
 
-    # Emitted when a message of type 'pyin' is received.
-    pyin_received = QtCore.Signal(object)
+    # Emitted when a message of type 'execute_input' is received.
+    execute_input_received = QtCore.Signal(object)
 
     # Emitted when a message of type 'pyout' is received.
     pyout_received = QtCore.Signal(object)

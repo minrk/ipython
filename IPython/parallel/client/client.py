@@ -179,7 +179,7 @@ class Metadata(dict):
               'after' : None,
               'status' : None,
 
-              'pyin' : None,
+              'execute_input' : None,
               'pyout' : None,
               'pyerr' : None,
               'stdout' : '',
@@ -868,8 +868,8 @@ class Client(HasTraits):
                 md[name] = s + content['data']
             elif msg_type == 'pyerr':
                 md.update({'pyerr' : self._unwrap_exception(content)})
-            elif msg_type == 'pyin':
-                md.update({'pyin' : content['code']})
+            elif msg_type == 'execute_input':
+                md.update({'execute_input' : content['code']})
             elif msg_type == 'display_data':
                 md['outputs'].append(content)
             elif msg_type == 'pyout':
