@@ -92,16 +92,16 @@ class ExecuteReply(object):
         return self.metadata[key]
     
     def __repr__(self):
-        pyout = self.metadata['pyout'] or {'data':{}}
-        text_out = pyout['data'].get('text/plain', '')
+        execute_result = self.metadata['execute_result'] or {'data':{}}
+        text_out = execute_result['data'].get('text/plain', '')
         if len(text_out) > 32:
             text_out = text_out[:29] + '...'
         
         return "<ExecuteReply[%i]: %s>" % (self.execution_count, text_out)
     
     def _repr_pretty_(self, p, cycle):
-        pyout = self.metadata['pyout'] or {'data':{}}
-        text_out = pyout['data'].get('text/plain', '')
+        execute_result = self.metadata['execute_result'] or {'data':{}}
+        text_out = execute_result['data'].get('text/plain', '')
         
         if not text_out:
             return
@@ -130,32 +130,32 @@ class ExecuteReply(object):
         )
     
     def _repr_html_(self):
-        pyout = self.metadata['pyout'] or {'data':{}}
-        return pyout['data'].get("text/html")
+        execute_result = self.metadata['execute_result'] or {'data':{}}
+        return execute_result['data'].get("text/html")
     
     def _repr_latex_(self):
-        pyout = self.metadata['pyout'] or {'data':{}}
-        return pyout['data'].get("text/latex")
+        execute_result = self.metadata['execute_result'] or {'data':{}}
+        return execute_result['data'].get("text/latex")
     
     def _repr_json_(self):
-        pyout = self.metadata['pyout'] or {'data':{}}
-        return pyout['data'].get("application/json")
+        execute_result = self.metadata['execute_result'] or {'data':{}}
+        return execute_result['data'].get("application/json")
     
     def _repr_javascript_(self):
-        pyout = self.metadata['pyout'] or {'data':{}}
-        return pyout['data'].get("application/javascript")
+        execute_result = self.metadata['execute_result'] or {'data':{}}
+        return execute_result['data'].get("application/javascript")
     
     def _repr_png_(self):
-        pyout = self.metadata['pyout'] or {'data':{}}
-        return pyout['data'].get("image/png")
+        execute_result = self.metadata['execute_result'] or {'data':{}}
+        return execute_result['data'].get("image/png")
     
     def _repr_jpeg_(self):
-        pyout = self.metadata['pyout'] or {'data':{}}
-        return pyout['data'].get("image/jpeg")
+        execute_result = self.metadata['execute_result'] or {'data':{}}
+        return execute_result['data'].get("image/jpeg")
     
     def _repr_svg_(self):
-        pyout = self.metadata['pyout'] or {'data':{}}
-        return pyout['data'].get("image/svg+xml")
+        execute_result = self.metadata['execute_result'] or {'data':{}}
+        return execute_result['data'].get("image/svg+xml")
 
 
 class Metadata(dict):
@@ -180,7 +180,7 @@ class Metadata(dict):
               'status' : None,
 
               'execute_input' : None,
-              'pyout' : None,
+              'execute_result' : None,
               'pyerr' : None,
               'stdout' : '',
               'stderr' : '',
@@ -872,8 +872,8 @@ class Client(HasTraits):
                 md.update({'execute_input' : content['code']})
             elif msg_type == 'display_data':
                 md['outputs'].append(content)
-            elif msg_type == 'pyout':
-                md['pyout'] = content
+            elif msg_type == 'execute_result':
+                md['execute_result'] = content
             elif msg_type == 'data_message':
                 data, remainder = serialize.unserialize_object(msg['buffers'])
                 md['data'].update(data)

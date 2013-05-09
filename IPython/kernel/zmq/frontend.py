@@ -51,7 +51,7 @@ class Console(code.InteractiveConsole):
         sys.ps3 = 'Out : '
         # Build dict of handlers for message types
         self.handlers = {}
-        for msg_type in ['execute_input', 'pyout', 'pyerr', 'stream']:
+        for msg_type in ['execute_input', 'execute_result', 'pyerr', 'stream']:
             self.handlers[msg_type] = getattr(self, 'handle_%s' % msg_type)
 
     def handle_execute_input(self, omsg):
@@ -62,7 +62,7 @@ class Console(code.InteractiveConsole):
             print('[IN from %s]' % omsg.parent_header.username)
             print(c)
 
-    def handle_pyout(self, omsg):
+    def handle_execute_result(self, omsg):
         #print omsg # dbg
         if omsg.parent_header.session == self.session.session:
             print("%s%s" % (sys.ps3, omsg.content.data))

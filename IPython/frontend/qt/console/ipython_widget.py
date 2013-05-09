@@ -211,10 +211,10 @@ class IPythonWidget(FrontendWidget):
                 last_cell = cell
         self._set_history(items)
 
-    def _handle_pyout(self, msg):
+    def _handle_execute_result(self, msg):
         """ Reimplemented for IPython-style "display hook".
         """
-        self.log.debug("pyout: %s", msg.get('content', ''))
+        self.log.debug("execute_result: %s", msg.get('content', ''))
         if not self._hidden and self._is_from_this_session(msg):
             content = msg['content']
             prompt_number = content.get('execution_count', 0)

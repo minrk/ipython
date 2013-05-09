@@ -215,7 +215,7 @@ class KernelInfoReply(Reference):
 
 # IOPub messages
 
-class PyIn(Reference):
+class ExecuteInput(Reference):
     code = Unicode()
     execution_count = Integer()
 
@@ -240,7 +240,7 @@ class DisplayData(Reference):
             nt.assert_true(isinstance(v, basestring), "expected string data, got %r" % v)
 
 
-class PyOut(Reference):
+class ExecuteResult(Reference):
     execution_count = Integer()
     data = Dict()
     def _data_changed(self, name, old, new):
@@ -255,8 +255,8 @@ references = {
     'status' : Status(),
     'complete_reply' : CompleteReply(),
     'kernel_info_reply': KernelInfoReply(),
-    'execute_input' : PyIn(),
-    'pyout' : PyOut(),
+    'execute_input' : ExecuteInput(),
+    'execute_result' : ExecuteResult(),
     'pyerr' : PyErr(),
     'stream' : Stream(),
     'display_data' : DisplayData(),

@@ -203,7 +203,7 @@ class ZMQTerminalInteractiveShell(TerminalInteractiveShell):
         """ Method to procces subscribe channel's messages
 
            This method reads a message and processes the content in different
-           outputs like stdout, stderr, pyout and status
+           outputs like stdout, stderr, execute_result and status
 
            Arguments:
            sub_msg:  message receive from kernel in the sub socket channel
@@ -226,7 +226,7 @@ class ZMQTerminalInteractiveShell(TerminalInteractiveShell):
                         print(sub_msg["content"]["data"], file=io.stderr, end="")
                         io.stderr.flush()
 
-                elif msg_type == 'pyout':
+                elif msg_type == 'execute_result':
                     self.execution_count = int(sub_msg["content"]["execution_count"])
                     format_dict = sub_msg["content"]["data"]
                     self.handle_rich_data(format_dict)

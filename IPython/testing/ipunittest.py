@@ -80,12 +80,12 @@ class IPython2PythonConverter(object):
 
         pyps1 = '>>> '
         pyps2 = '... '
-        pyout = ''
+        execute_result = ''
 
         dnew = ds
         dnew = self.rps1.sub(pyps1, dnew)
         dnew = self.rps2.sub(pyps2, dnew)
-        dnew = self.rout.sub(pyout, dnew)
+        dnew = self.rout.sub(execute_result, dnew)
         ip = globalipapp.get_ipython()
 
         # Convert input IPython source into valid Python.

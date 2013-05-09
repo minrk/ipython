@@ -228,7 +228,7 @@ class EngineFactory(RegistrationFactory):
                 sys.stderr.topic = cast_bytes('engine.%i.stderr' % self.id)
             if self.display_hook_factory:
                 sys.displayhook = self.display_hook_factory(self.session, iopub_socket)
-                sys.displayhook.topic = cast_bytes('engine.%i.pyout' % self.id)
+                sys.displayhook.topic = cast_bytes('engine.%i.execute_result' % self.id)
 
             self.kernel = Kernel(config=self.config, int_id=self.id, ident=self.ident, session=self.session,
                     control_stream=control_stream, shell_streams=shell_streams, iopub_socket=iopub_socket,
