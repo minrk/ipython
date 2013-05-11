@@ -57,7 +57,8 @@ def setup():
     
     cp = TestProcessLauncher()
     cp.cmd_and_args = ipcontroller_cmd_argv + \
-                ['--profile=iptest', '--log-level=50', '--ping=250', '--dictdb']
+                ['--profile=iptest', '--log-level=50', '--ping=250', '--dictdb',
+                '--HeartMonitor.max_heartmonitor_misses=1']
     cp.start()
     launchers.append(cp)
     tic = time.time()
