@@ -686,7 +686,11 @@ class Session(Configurable):
             point.
         """
         if copy:
-            idx = msg_list.index(DELIM)
+            try:
+                idx = msg_list.index(DELIM)
+            except:
+                print (msg_list)
+                raise
             return msg_list[:idx], msg_list[idx+1:]
         else:
             failed = True
