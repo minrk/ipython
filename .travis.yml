@@ -5,10 +5,5 @@ python:
     - 2.7
     - 3.2
     - 3.3
-before_install:
-    - easy_install -q pyzmq
-install:
-    - python setup.py install -q 
 script:
-    - if [[ $TRAVIS_PYTHON_VERSION == '2.'* ]]; then iptest -w /tmp; fi
-    - if [[ $TRAVIS_PYTHON_VERSION == '3.'* ]]; then iptest3 -w /tmp; fi
+    - python -c "import sys; print sys.executable"
