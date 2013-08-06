@@ -2091,18 +2091,8 @@ var IPython = (function (IPython) {
      * @param {String} checkpoint ID
      */
     Notebook.prototype.restore_checkpoint = function (checkpoint) {
-<<<<<<< HEAD
-        $([IPython.events]).trigger('checkpoint_restoring.Notebook', checkpoint);
-        if (this.notebook_path != "") {
-            var url = this.baseProjectUrl() + 'api/notebooks/' + this.notebook_path + this.notebook_name + '/checkpoints/' + checkpoint;
-        }
-        else {
-            var url = this.baseProjectUrl() + 'api/notebooks/' +this.notebook_name + '/checkpoints/' + checkpoint;
-        }
-=======
         $([IPython.events]).trigger('notebook_restoring.Notebook', checkpoint);
         var url = this.baseProjectUrl() + 'api/notebooks/' + this.notebookPath() + this.notebook_name + '/checkpoints/' + checkpoint;
->>>>>>> fixing path redirects, cleaning path logic
         $.post(url).done(
             $.proxy(this.restore_checkpoint_success, this)
         ).fail(
