@@ -36,7 +36,13 @@ class ContentRootHandler(IPythonHandler):
         cm = self.content_manager
         contents = cm.list_contents("")
         self.finish(jsonapi.dumps(contents))
-        
+
+    def post(self):
+        cm = self.content_manager
+        name = cm.new_folder()
+        model = cm.content_model(name, type=None)
+        self.finish(jsonapi.dumps(model))
+
 
 class ContentHandler(IPythonHandler):
 
@@ -45,6 +51,12 @@ class ContentHandler(IPythonHandler):
         cm = self.content_manager
         contents = cm.list_contents(content_path)
         self.finish(jsonapi.dumps(contents))
+    
+    def post(self, content_path):
+        cm = self.content_manager
+        name = cm.new_folder(path=content_path)
+        model = cm.content_model(name, content_path, type=None)
+        self.finish(jsonapi.dumps(model))
 
     @web.authenticated
     def delete(self, content_path):
@@ -53,12 +65,14 @@ class ContentHandler(IPythonHandler):
         self.set_status(204)
         self.finish()
 
+
 class ServicesRedirectHandler(IPythonHandler):
     
     @web.authenticated
     def get(self):
         url = self.base_project_url + 'api'
         self.redirect(url)
+
 
 class ServicesHandler(IPythonHandler):
     

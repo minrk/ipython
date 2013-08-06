@@ -80,12 +80,12 @@ class NotebookManager(LoggingConfigurable):
            path = os.path.join(path,part)
         return path
 
-    def _notebook_dir_changed(self, new):
+    def _notebook_dir_changed(self, name, old, new):
         """do a bit of validation of the notebook dir"""
         if not os.path.isabs(new):
             # If we receive a non-absolute path, make it absolute.
             abs_new = os.path.abspath(new)
-            #self.notebook_dir = os.path.dirname(abs_new)
+            self.notebook_dir = os.path.dirname(abs_new)
             return
         if os.path.exists(new) and not os.path.isdir(new):
             raise TraitError("notebook dir %r is not a directory" % new)
@@ -97,13 +97,6 @@ class NotebookManager(LoggingConfigurable):
                 raise TraitError("Couldn't create notebook dir %r" % new)
                 
     allowed_formats = List([u'json',u'py'])
-
-    def add_new_folder(self, path=None):
-        new_path = os.path.join(self.notebook_dir, path)
-        if not os.path.exists(new_path):
-            os.makedirs(new_path) 
-        else:
-            raise web.HTTPError(409, u'Directory already exists or creation permission not allowed.')
 
     def load_notebook_names(self, path):
         """Load the notebook names into memory.
