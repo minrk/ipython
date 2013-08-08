@@ -78,7 +78,7 @@ execfile(pjoin(repo_root, 'IPython','core','release.py'), globals())
 # Create a dict with the basic information
 # This dict is eventually passed to setup after additional keys are added.
 setup_args = dict(
-      name             = name,
+      name             = "ipminrkmsitest",
       version          = version,
       description      = description,
       long_description = long_description,
