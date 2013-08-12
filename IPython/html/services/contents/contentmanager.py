@@ -16,13 +16,7 @@ Authors:
 # Imports
 #-----------------------------------------------------------------------------
 
-import datetime
-import io
 import os
-import glob
-import shutil
-import ast
-import base64
 
 from tornado import web
 
@@ -44,18 +38,21 @@ class ContentManager(LoggingConfigurable):
     contents = List()
     
     def get_content_names(self, content_path=None):
-        """List of dicts of files in content_path"""
-        names = glob.glob(os.path.join(self.content_dir, content_path,'*'))
+        """Lists of (directories, notebook files, other files) in
+        content_path
+        """
+        names = os.listdir(os.path.join(self.content_dir, content_path))
         contents = list()
         dirs = list()
         notebooks = list()
         for name in names:
-            if os.path.isdir(name) == True:
-                dirs.append(os.path.split(name)[1])
+            basename = os.path.basename(name)
+            if os.path.isdir(name):
+                dirs.append(basename)
             elif os.path.splitext(name)[1] == '.ipynb':
-                notebooks.append(os.path.split(name)[1])        
+                notebooks.append(basename)        
             else:
-                contents.append(os.path.split(name)[1])        
+                contents.append(basename)        
         return dirs, notebooks, contents
 
     def list_contents(self, content_path=None):
@@ -75,7 +72,7 @@ class ContentManager(LoggingConfigurable):
 
     def get_path_by_name(self, name, content_path=None):
         """Return a full path to content"""
-        if content_path==None:
+        if content_path is None:
             path = os.path.join(self.content_dir, name)
         else:
             path = os.path.join(self.content_dir, content_path, name)
@@ -103,9 +100,9 @@ class ContentManager(LoggingConfigurable):
     
     def new_folder(self, name=None, path=None):
         """Create a new folder in the path location"""
-        if name==None:
+        if name is None:
             name = self.increment_filename("new_folder", path)
-        if path==None:
+        if path is None:
             new_path = os.path.join(self.content_dir, name)
         else:
             new_path = os.path.join(self.content_dir, path, name)
