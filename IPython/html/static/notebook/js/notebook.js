@@ -86,7 +86,6 @@ var IPython = (function (IPython) {
     
     Notebook.prototype.notebookPath = function() {
         var path = $('body').data('notebookPath');
-        console.log(path);
         path = decodeURIComponent(path);
         return path
     };
@@ -1725,10 +1724,10 @@ var IPython = (function (IPython) {
             dataType : "json",
             success:$.proxy(function (data, status, xhr){
                 notebook_name = data.name;
-                window.open(this._baseProjectUrl +'notebooks/' + this.notebookPath()+ notebook_name);
+                window.open(this._baseProjectUrl +'notebooks' + this.notebookPath()+ notebook_name);
             }, this)
         };
-        var url = this._baseProjectUrl + 'notebooks/' + path;
+        var url = this._baseProjectUrl + 'notebooks' + path;
         $.ajax(url,settings);
     };
 
@@ -1743,10 +1742,10 @@ var IPython = (function (IPython) {
             dataType : "json",
             success:$.proxy(function (data, status, xhr){
                 notebook_name = data.name;
-                window.open(this._baseProjectUrl +'notebooks/' + this.notebookPath()+ notebook_name);
+                window.open(this._baseProjectUrl +'notebooks' + this.notebookPath()+ notebook_name);
             }, this)
         };
-        var url = this._baseProjectUrl + 'notebooks/' + path;
+        var url = this._baseProjectUrl + 'notebooks' + path;
         $.ajax(url,settings);
     };
 
