@@ -51,10 +51,6 @@ function (marked) {
     var notebookName = $('body').data('notebookName');
     notebookName = decodeURIComponent(notebookName);
     notebookPath = decodeURIComponent(notebookPath);
-    console.log(notebookName);
-    if (notebookPath == 'None'){
-        notebookPath = "";
-    }
 
     IPython.page = new IPython.Page();
     IPython.layout_manager = new IPython.LayoutManager();

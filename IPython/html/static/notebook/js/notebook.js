@@ -1498,7 +1498,7 @@ var IPython = (function (IPython) {
      * @return {String} This notebook's name
      */
     Notebook.prototype.get_notebook_name = function () {
-        nbname = this.notebook_name.substring(0,this.notebook_name.length-6);
+        var nbname = this.notebook_name.substring(0,this.notebook_name.length-6);
         return nbname;
     };
 
