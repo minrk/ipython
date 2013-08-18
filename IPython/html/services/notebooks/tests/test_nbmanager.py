@@ -43,12 +43,10 @@ class TestFileNotebookManager(TestCase):
             fs_path = os.path.join(fm.notebook_dir, *rel_path_list)
             self.assertEqual(path, fs_path)
 
-            fm = FileNotebookManager(notebook_dir=nbdir)
             path = fm.get_os_path('test.ipynb')
             fs_path = os.path.join(fm.notebook_dir, 'test.ipynb')
             self.assertEqual(path, fs_path)
 
-            fm = FileNotebookManager(notebook_dir=nbdir)
             path = fm.get_os_path('test.ipynb', '////')
             fs_path = os.path.join(fm.notebook_dir, 'test.ipynb')
             self.assertEqual(path, fs_path)

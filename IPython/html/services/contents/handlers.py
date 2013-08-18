@@ -40,7 +40,7 @@ class ContentRootHandler(IPythonHandler):
     def post(self):
         cm = self.content_manager
         name = cm.new_folder()
-        model = cm.content_model(name, type=None)
+        model = cm.content_model(name, ftype='dir')
         self.finish(jsonapi.dumps(model))
 
 
@@ -55,7 +55,7 @@ class ContentHandler(IPythonHandler):
     def post(self, content_path):
         cm = self.content_manager
         name = cm.new_folder(path=content_path)
-        model = cm.content_model(name, content_path, type=None)
+        model = cm.content_model(name, content_path, ftype='dir')
         self.finish(jsonapi.dumps(model))
 
     @web.authenticated

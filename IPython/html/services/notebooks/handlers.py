@@ -133,16 +133,16 @@ class NotebookHandler(IPythonHandler):
     def put(self, notebook_path):
         """saves the notebook in the location given by 'notebook_path'."""
         nbm = self.notebook_manager
-        name, path = nbm.named_notebook_path(notebook_path)
+        fname, path = nbm.named_notebook_path(notebook_path)
         format = self.get_argument('format', default='json')
-        nbm.save_notebook(self.request.body, notebook_path=path, name=name, format=format)
-        model = nbm.notebook_model(name, path)
+        nbm.save_notebook(self.request.body, notebook_path=path, name=fname, format=format)
+        model = nbm.notebook_model(fname, path)
         self.set_status(204)
         self.finish(jsonapi.dumps(model))
 
     @web.authenticated
     def delete(self, notebook_path):
-        """delete rmoves the notebook in the given notebook path"""
+        """delete the notebook in the given notebook path"""
         nbm = self.notebook_manager
         name, path = nbm.named_notebook_path(notebook_path)
         nbm.delete_notebook(name, path)

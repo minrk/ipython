@@ -72,7 +72,6 @@ class NamedNotebookHandler(IPythonHandler):
                 )
             )
         else:
-            self.log.info(notebook_path)
             url = "/files/" + notebook_path
             self.redirect(url)
             
