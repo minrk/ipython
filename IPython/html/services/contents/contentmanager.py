@@ -35,8 +35,6 @@ class ContentManager(LoggingConfigurable):
     content_dir = Unicode(os.getcwdu(), config=True, help="""
             The directory to use for contents.
             """)
-            
-    contents = List()
 
     def get_os_path(self, fname=None, path='/'):
         """Given a notebook name and a server URL path, return its file system
