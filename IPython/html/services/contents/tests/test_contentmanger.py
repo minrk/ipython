@@ -77,19 +77,19 @@ class TestContentManager(TestCase):
             name1 = cm.new_folder('fold1', '/')
             name2 = cm.new_folder('fold2', '/')
             name3 = cm.new_folder('fold3', '/')
-            name01 = cm.new_folder('fold01', '/fold1')
-            name02 = cm.new_folder('fold02', '/fold1')
-            name03 = cm.new_folder('fold03', '/fold1')
+            name01 = cm.new_folder('fold01', 'fold1')
+            name02 = cm.new_folder('fold02', 'fold1')
+            name03 = cm.new_folder('fold03', 'fold1')
             
             # List the names in the root folder
             names = cm.get_content_names('/')
             expected = ['fold1', 'fold2', 'fold3']
-            self.assertEqual(names, expected)
+            self.assertEqual(set(names), set(expected))
             
             # List the names in the subfolder 'fold1'.
-            names = cm.get_content_names('/fold1')
+            names = cm.get_content_names('fold1')
             expected = ['fold01', 'fold02', 'fold03']
-            self.assertEqual(names, expected)
+            self.assertEqual(set(names), set(expected))
 
     def test_content_model(self):
         with TemporaryDirectory() as td:
@@ -97,17 +97,15 @@ class TestContentManager(TestCase):
             cm = ContentManager(content_dir=td)
             name1 = cm.new_folder('fold1', '/')
             name2 = cm.new_folder('fold2', '/')
-            name01 = cm.new_folder('fold01', '/fold1')
-            name02 = cm.new_folder('fold02', '/fold1')
+            name01 = cm.new_folder('fold01', 'fold1')
+            name02 = cm.new_folder('fold02', 'fold1')
             
             # Check to see if the correct model and list of 
             # model dicts are returned for root directory
             # and subdirectory.
             contents = cm.list_contents('/')
-            expected = [cm.content_model(name1, '/', 'dir'), 
-                        cm.content_model(name2, '/', 'dir')]
-            contents1 = cm.list_contents('/fold1')
-            expected1 = [cm.content_model(name01, '/fold1', 'dir'), 
-                        cm.content_model(name02, '/fold1', 'dir')]
-            self.assertEqual(contents, expected)
-            self.assertEqual(contents1, expected1)
+            contents1 = cm.list_contents('fold1')
+            self.assertEqual(type(contents), type(list()))
+            self.assertEqual(type(contents[0]), type(dict()))
+            self.assertEqual(contents[0]['path'], '/')
+            self.assertEqual(contents1[0]['path'], 'fold1')
