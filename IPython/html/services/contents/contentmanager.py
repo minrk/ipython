@@ -18,12 +18,12 @@ Authors:
 
 import os
 import shutil
+import errno
 
 from tornado import web
 
 from IPython.config.configurable import LoggingConfigurable
-from IPython.nbformat import current
-from IPython.utils.traitlets import List, Dict, Unicode, TraitError
+from IPython.utils.traitlets import Unicode, TraitError
 from IPython.utils import tz
 
 #-----------------------------------------------------------------------------
@@ -140,10 +140,15 @@ class ContentManager(LoggingConfigurable):
             name = self.increment_filename("new_folder", path)
         new_path = self.get_os_path(name, path)
         # Raise an error if the file exists
-        if not os.path.exists(new_path):
+        try:
             os.makedirs(new_path)
-        else:
-            raise web.HTTPError(409, u'Directory already exists or permission to create is not allowed.')
+        except OSError as e:
+            if e.errno == errno.EEXIST:
+                raise web.HTTPError(409, u'Directory already exists.')
+            elif e.errno == errno.EACCES:
+                raise web.HTTPError(403, u'Create dir: permission denied.')
+            else:
+                raise web.HTTPError(400, str(e))
         return name
 
     def increment_filename(self, basename, content_path='/'):
@@ -165,9 +170,16 @@ class ContentManager(LoggingConfigurable):
 
     def delete_content(self, name=None, content_path='/'):
         """Delete a file or folder in the named location. 
-        Raises and Error if the named file/folder doesn't exist
+        Raises an error if the named file/folder doesn't exist
         """
-        if os.path.exists(self.get_os_path(name, content_path)):
-            shutil.rmtree(self.get_os_path(name, content_path))
+        path = self.get_os_path(name, content_path)
+        if path != self.content_dir:
+            try:
+                shutil.rmtree(path)
+            except OSError as e:
+                if e.errno == errno.ENOENT:
+                    raise web.HTTPError(404, u'Directory or file does not exist.')
+                else:
+                    raise web.HTTPError(400, str(e))
         else:
-            raise TraitError('Item does not exist: %s' % name)
+            raise web.HTTPError(403, "Cannot delete root directory where notebook server lives.")
