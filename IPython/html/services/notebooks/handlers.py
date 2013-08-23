@@ -29,34 +29,6 @@ from ...base.handlers import IPythonHandler
 #-----------------------------------------------------------------------------
 
 
-class NotebookRootHandler(IPythonHandler):
-
-    @web.authenticated
-    def get(self):
-        """get returns a list of notebooks from the location
-        where the server was started."""
-        nbm = self.notebook_manager
-        notebooks = nbm.list_notebooks("/")
-        self.finish(jsonapi.dumps(notebooks))
-
-    @web.authenticated
-    def post(self):
-        """post creates a notebooks in the directory where the
-        server was started"""
-        nbm = self.notebook_manager
-        self.log.info(nbm.notebook_dir)
-        body = self.request.body.strip()
-        format = self.get_argument('format', default='json')
-        name = self.get_argument('name', default=None)
-        if body:
-            fname = nbm.save_new_notebook(body, notebook_path='/', name=name, format=format)
-        else:
-            fname = nbm.new_notebook(notebook_path='/')
-        self.set_header('Location', nbm.notebook_dir + fname)
-        model = nbm.notebook_model(fname)
-        self.set_header('Location', '{0}api/notebooks/{1}'.format(self.base_project_url, fname))
-        self.finish(jsonapi.dumps(model))
-
 class NotebookHandler(IPythonHandler):
 
     SUPPORTED_METHODS = ('GET', 'PUT', 'PATCH', 'POST','DELETE')
@@ -67,6 +39,8 @@ class NotebookHandler(IPythonHandler):
         in the notebook path given. If a name is given, return 
         the notebook representation"""
         nbm = self.notebook_manager
+        # path will have leading and trailing slashes, such as
+        # '/foo/bar/'
         name, path = nbm.named_notebook_path(notebook_path)
         
         # Check to see if a notebook name was given
@@ -105,15 +79,13 @@ class NotebookHandler(IPythonHandler):
         self.finish(jsonapi.dumps(model))
 
     @web.authenticated
-    def post(self,notebook_path):
+    def post(self, notebook_path):
         """Create a new notebook in the location given by 'notebook_path'."""
         nbm = self.notebook_manager
         fname, path = nbm.named_notebook_path(notebook_path)
         body = self.request.body.strip()
-        format = self.get_argument('format', default='json')
-        name = self.get_argument('name', default=None)
         if body:
-            fname = nbm.save_new_notebook(body, notebook_path=path, name=name, format=format)
+            fname = nbm.save_new_notebook(body, notebook_path=path)
         else:
             fname = nbm.new_notebook(notebook_path=path)
         self.set_header('Location', nbm.notebook_dir + path + fname)
@@ -125,8 +97,7 @@ class NotebookHandler(IPythonHandler):
         """saves the notebook in the location given by 'notebook_path'."""
         nbm = self.notebook_manager
         fname, path = nbm.named_notebook_path(notebook_path)
-        format = self.get_argument('format', default='json')
-        nbm.save_notebook(self.request.body, notebook_path=path, name=fname, format=format)
+        nbm.save_notebook(self.request.body, notebook_path=path, name=fname)
         model = nbm.notebook_model(fname, path)
         self.set_status(204)
         self.finish(jsonapi.dumps(model))
@@ -199,17 +170,14 @@ class ModifyNotebookCheckpointsHandler(IPythonHandler):
 #-----------------------------------------------------------------------------
 
 
-_notebook_path_regex = r"(?P<notebook_path>.+)"
+_notebook_path_regex = r"(?P<notebook_path>.*)"
 _checkpoint_id_regex = r"(?P<checkpoint_id>[\w-]+)"
 
 default_handlers = [
     (r"api/notebooks/%s/checkpoints" % _notebook_path_regex, NotebookCheckpointsHandler),
     (r"api/notebooks/%s/checkpoints/%s" % (_notebook_path_regex, _checkpoint_id_regex),
         ModifyNotebookCheckpointsHandler),
-    (r"api/notebooks/%s/" % _notebook_path_regex, NotebookHandler), 
-    (r"api/notebooks/%s" % _notebook_path_regex, NotebookHandler),
-    (r"api/notebooks/", NotebookRootHandler),
-    (r"api/notebooks", NotebookRootHandler),
+    (r"api/notebooks%s" % _notebook_path_regex, NotebookHandler),
 ]
 
 
