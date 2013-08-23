@@ -18,7 +18,7 @@ Authors:
 
 from tornado import web
 
-from zmq.utils import jsonapi
+import json
 
 from IPython.utils.jsonutil import date_default
 from ...base.handlers import IPythonHandler
@@ -37,7 +37,7 @@ class SessionRootHandler(IPythonHandler):
         nbm = self.notebook_manager
         km = self.kernel_manager
         sessions = sm.list_sessions()
-        self.finish(jsonapi.dumps(sessions))
+        self.finish(json.dumps(sessions))
 
     @web.authenticated
     def post(self):
@@ -61,7 +61,7 @@ class SessionRootHandler(IPythonHandler):
             sm.update_session(session_id, kernel=kernel_id)
             model = sm.get_session(id=session_id)
         self.set_header('Location', '{0}kernels/{1}'.format(self.base_kernel_url, kernel_id))
-        self.finish(jsonapi.dumps(model))
+        self.finish(json.dumps(model))
 
 class SessionHandler(IPythonHandler):
 
@@ -72,7 +72,7 @@ class SessionHandler(IPythonHandler):
         # Returns the JSON model for a single session
         sm = self.session_manager
         model = sm.get_session(id=session_id)
-        self.finish(jsonapi.dumps(model))
+        self.finish(json.dumps(model))
 
     @web.authenticated
     def patch(self, session_id):
@@ -80,11 +80,11 @@ class SessionHandler(IPythonHandler):
         sm = self.session_manager
         nbm = self.notebook_manager
         km = self.kernel_manager
-        data = jsonapi.loads(self.request.body)
+        data = json.loads(self.request.body)
         name, path = nbm.named_notebook_path(data['notebook_path'])
         sm.update_session(session_id, name=name)
         model = sm.get_session(id=session_id)
-        self.finish(jsonapi.dumps(model))
+        self.finish(json.dumps(model))
 
     @web.authenticated
     def delete(self, session_id):

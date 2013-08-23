@@ -21,7 +21,7 @@ import logging
 from tornado import web
 from tornado import websocket
 
-from zmq.utils import jsonapi
+import json
 
 from IPython.kernel.zmq.session import Session
 from IPython.utils.jsonutil import date_default
@@ -58,7 +58,7 @@ class ZMQStreamHandler(websocket.WebSocketHandler):
         except KeyError:
             pass
         msg.pop('buffers')
-        return jsonapi.dumps(msg, default=date_default)
+        return json.dumps(msg, default=date_default)
 
     def _on_zmq_reply(self, msg_list):
         # Sometimes this gets triggered when the on_close method is scheduled in the

@@ -4,7 +4,7 @@
 import os
 import sys
 import json
-from zmq.utils import jsonapi
+import json
 
 import requests
 
@@ -74,10 +74,10 @@ class SessionAPITest(NotebookTestBase):
 
         # PATCH a session
         data = {'notebook_path': 'test.ipynb'}
-        r = requests.patch(sess_url, data=jsonapi.dumps(data))
+        r = requests.patch(sess_url, data=json.dumps(data))
         # Patching the notebook webservice too (just for consistency)
         requests.patch(self.notebook_url() + '/Untitled0.ipynb', 
-            data=jsonapi.dumps({'name':'test.ipynb'}))
+            data=json.dumps({'name':'test.ipynb'}))
         assert isinstance(r.json(), dict)
         assert r.json().has_key('name')
         assert r.json().has_key('id')

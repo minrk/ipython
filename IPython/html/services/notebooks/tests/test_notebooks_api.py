@@ -4,7 +4,7 @@
 import os
 import sys
 import json
-from zmq.utils import jsonapi
+import json
 
 import requests
 
@@ -55,7 +55,7 @@ class APITest(NotebookTestBase):
 
         # PATCH (rename) request.
         new_name = {'name':'test.ipynb'}
-        r = requests.patch(url, data=jsonapi.dumps(new_name))
+        r = requests.patch(url, data=json.dumps(new_name))
         data = r.json()
         assert isinstance(data, dict)
 
@@ -98,7 +98,7 @@ class APITest(NotebookTestBase):
 
         # PATCH notebooks that are one and two levels down.
         new_name = {'name': 'testfoo.ipynb'}
-        r = requests.patch(url+'Untitled0.ipynb', data=jsonapi.dumps(new_name))
+        r = requests.patch(url+'Untitled0.ipynb', data=json.dumps(new_name))
         r = requests.get(url+'testfoo.ipynb')
         data = r.json()
         assert isinstance(data, dict)

@@ -19,7 +19,7 @@ Authors:
 import logging
 from tornado import web
 
-from zmq.utils import jsonapi
+import json
 
 from IPython.utils.jsonutil import date_default
 
@@ -36,7 +36,7 @@ class MainKernelHandler(IPythonHandler):
     @web.authenticated
     def get(self):
         km = self.kernel_manager
-        self.finish(jsonapi.dumps(km.list_kernels()))
+        self.finish(json.dumps(km.list_kernels()))
 
     @web.authenticated
     def post(self):
@@ -44,7 +44,7 @@ class MainKernelHandler(IPythonHandler):
         kernel_id = km.start_kernel()
         model = km.kernel_model(kernel_id, self.ws_url)
         self.set_header('Location', '{0}kernels/{1}'.format(self.base_kernel_url, kernel_id))
-        self.finish(jsonapi.dumps(model))
+        self.finish(json.dumps(model))
 
 
 class KernelHandler(IPythonHandler):
@@ -55,7 +55,7 @@ class KernelHandler(IPythonHandler):
     def get(self, kernel_id):
         km = self.kernel_manager
         model = km.kernel_model(kernel_id, self.ws_url)
-        self.finish(jsonapi.dumps(model))
+        self.finish(json.dumps(model))
 
     @web.authenticated
     def delete(self, kernel_id):
@@ -77,7 +77,7 @@ class KernelActionHandler(IPythonHandler):
             km.restart_kernel(kernel_id)
             model = km.kernel_model(kernel_id, self.ws_url)
             self.set_header('Location', '{0}api/kernels/{1}'.format(self.base_kernel_url, kernel_id))
-            self.write(jsonapi.dumps(model))
+            self.write(json.dumps(model))
         self.finish()
 
 
@@ -109,7 +109,7 @@ class ZMQChannelHandler(AuthenticatedZMQStreamHandler):
             self.zmq_stream.on_recv(self._on_zmq_reply)
 
     def on_message(self, msg):
-        msg = jsonapi.loads(msg)
+        msg = json.loads(msg)
         self.session.send(self.zmq_stream, msg)
 
     def on_close(self):
@@ -145,7 +145,7 @@ class IOPubHandler(ZMQChannelHandler):
         msg = self.session.msg("status",
             {'execution_state': status}
         )
-        self.write_message(jsonapi.dumps(msg, default=date_default))
+        self.write_message(json.dumps(msg, default=date_default))
 
     def on_kernel_restarted(self):
         logging.warn("kernel %s restarted", self.kernel_id)

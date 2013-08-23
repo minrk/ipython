@@ -18,7 +18,7 @@ Authors:
 
 from tornado import web
 
-from zmq.utils import jsonapi
+import json
 
 from IPython.utils.jsonutil import date_default
 
@@ -37,7 +37,7 @@ class NotebookRootHandler(IPythonHandler):
         where the server was started."""
         nbm = self.notebook_manager
         notebooks = nbm.list_notebooks("/")
-        self.finish(jsonapi.dumps(notebooks))
+        self.finish(json.dumps(notebooks))
 
     @web.authenticated
     def post(self):
@@ -55,7 +55,7 @@ class NotebookRootHandler(IPythonHandler):
         self.set_header('Location', nbm.notebook_dir + fname)
         model = nbm.notebook_model(fname)
         self.set_header('Location', '{0}api/notebooks/{1}'.format(self.base_project_url, fname))
-        self.finish(jsonapi.dumps(model))
+        self.finish(json.dumps(model))
 
 class NotebookHandler(IPythonHandler):
 
@@ -73,7 +73,7 @@ class NotebookHandler(IPythonHandler):
         if name is None:
             # List notebooks in 'notebook_path'
             notebooks = nbm.list_notebooks(path)
-            self.finish(jsonapi.dumps(notebooks))
+            self.finish(json.dumps(notebooks))
         else:
             # get and return notebook representation
             format = self.get_argument('format', default='json')
@@ -92,7 +92,7 @@ class NotebookHandler(IPythonHandler):
                     self.set_header('Content-Disposition','attachment; filename="%s.py"' % name)
                     self.finish(representation)
             else:
-                self.finish(jsonapi.dumps(model))
+                self.finish(json.dumps(model))
 
     @web.authenticated
     def patch(self, notebook_path):
@@ -100,9 +100,9 @@ class NotebookHandler(IPythonHandler):
         Changes the notebook name to the name given in data."""
         nbm = self.notebook_manager
         name, path = nbm.named_notebook_path(notebook_path)
-        data = jsonapi.loads(self.request.body)
+        data = json.loads(self.request.body)
         model = nbm.change_notebook(data, name, path)
-        self.finish(jsonapi.dumps(model))
+        self.finish(json.dumps(model))
 
     @web.authenticated
     def post(self,notebook_path):
@@ -118,7 +118,7 @@ class NotebookHandler(IPythonHandler):
             fname = nbm.new_notebook(notebook_path=path)
         self.set_header('Location', nbm.notebook_dir + path + fname)
         model = nbm.notebook_model(fname, path)
-        self.finish(jsonapi.dumps(model))
+        self.finish(json.dumps(model))
 
     @web.authenticated
     def put(self, notebook_path):
@@ -129,7 +129,7 @@ class NotebookHandler(IPythonHandler):
         nbm.save_notebook(self.request.body, notebook_path=path, name=fname, format=format)
         model = nbm.notebook_model(fname, path)
         self.set_status(204)
-        self.finish(jsonapi.dumps(model))
+        self.finish(json.dumps(model))
 
     @web.authenticated
     def delete(self, notebook_path):
@@ -151,7 +151,7 @@ class NotebookCheckpointsHandler(IPythonHandler):
         nbm = self.notebook_manager
         name, path = nbm.named_notebook_path(notebook_path)
         checkpoints = nbm.list_checkpoints(name, path)
-        data = jsonapi.dumps(checkpoints, default=date_default)
+        data = json.dumps(checkpoints, default=date_default)
         self.finish(data)
     
     @web.authenticated
@@ -160,7 +160,7 @@ class NotebookCheckpointsHandler(IPythonHandler):
         nbm = self.notebook_manager
         name, path = nbm.named_notebook_path(notebook_path)
         checkpoint = nbm.create_checkpoint(name, path)
-        data = jsonapi.dumps(checkpoint, default=date_default)
+        data = json.dumps(checkpoint, default=date_default)
         if path == None:
             self.set_header('Location', '{0}notebooks/{1}/checkpoints/{2}'.format(
                 self.base_project_url, name, checkpoint['checkpoint_id']

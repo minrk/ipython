@@ -19,7 +19,7 @@ Authors:
 import os
 from tornado import web
 HTTPError = web.HTTPError
-from zmq.utils import jsonapi
+import json
 
 
 from ..base.handlers import IPythonHandler
@@ -41,11 +41,11 @@ class NotebookHandler(IPythonHandler):
         nbm = self.notebook_manager
         data=self.request.body
         if data:
-            data = jsonapi.loads(data)
+            data = json.loads(data)
             notebook_name = nbm.copy_notebook(data['name'])
         else:
             notebook_name = nbm.new_notebook()
-        self.finish(jsonapi.dumps({"name": notebook_name}))
+        self.finish(json.dumps({"name": notebook_name}))
 
 
 class NamedNotebookHandler(IPythonHandler):
@@ -84,11 +84,11 @@ class NamedNotebookHandler(IPythonHandler):
         nbm = self.notebook_manager
         data = self.request.body
         if data:
-            data = jsonapi.loads(data)
+            data = json.loads(data)
             notebook_name = nbm.copy_notebook(data['name'], notebook_path)
         else:
             notebook_name = nbm.new_notebook(notebook_path)
-        self.finish(jsonapi.dumps({"name": notebook_name}))
+        self.finish(json.dumps({"name": notebook_name}))
 
 
 #-----------------------------------------------------------------------------
