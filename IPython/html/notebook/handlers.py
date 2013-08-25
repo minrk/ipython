@@ -60,11 +60,10 @@ class NamedNotebookHandler(IPythonHandler):
             # a .ipynb filename was given
             if not nbm.notebook_exists(name, path):
                 raise web.HTTPError(404, u'Notebook does not exist: %s' % name)
-            project = self.project + path + name
             name = nbm.url_encode(name)
             path = nbm.url_encode(path)
             self.write(self.render_template('notebook.html',
-                project=project,
+                project=self.project_dir,
                 notebook_path=path,
                 notebook_name=name,
                 kill_kernel=False,
