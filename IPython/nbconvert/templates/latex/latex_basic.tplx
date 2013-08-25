@@ -111,7 +111,7 @@ it introduces a new line
 ((* endblock headingcell *))
 
 ((* block rawcell scoped *))
-((( cell.source | comment_lines )))
+((( cell.source )))
 ((* endblock rawcell *))
 
 ((* block unknowncell scoped *))

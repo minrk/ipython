@@ -249,7 +249,7 @@ Note: For best display, use latex syntax highlighting. =))
 %          will not get touched by the templating system.
 %==============================================================================
 ((*- block rawcell *))
-((( cell.source | wrap_text(wrap_size) )))
+((( cell.source )))
 ((* endblock rawcell -*))
 
 %==============================================================================
