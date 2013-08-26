@@ -50,7 +50,6 @@ var IPython = (function (IPython) {
         // single worksheet for now
         this.worksheet_metadata = {};
         this.control_key_active = false;
-        this.notebook_name = null;
         this.notebook_name_blacklist_re = /[\/\\:]/;
         this.nbformat = 3 // Increment this when changing the nbformat
         this.nbformat_minor = 0 // Increment this when changing the nbformat
@@ -1537,7 +1536,7 @@ var IPython = (function (IPython) {
      * @param {Object} data JSON representation of a notebook
      */
     Notebook.prototype.fromJSON = function (data) {
-        data = data.content;
+        var content = data.content;
         var ncells = this.ncells();
         var i;
         for (i=0; i<ncells; i++) {
@@ -1545,10 +1544,10 @@ var IPython = (function (IPython) {
             this.delete_cell(0);
         };
         // Save the metadata and name.
-        this.metadata = data.metadata;
-        this.notebook_name = data.metadata.name +'.ipynb';
+        this.metadata = content.metadata;
+        this.notebook_name = data.name;
         // Only handle 1 worksheet for now.
-        var worksheet = data.worksheets[0];
+        var worksheet = content.worksheets[0];
         if (worksheet !== undefined) {
             if (worksheet.metadata) {
                 this.worksheet_metadata = worksheet.metadata;
@@ -1569,7 +1568,7 @@ var IPython = (function (IPython) {
                 new_cell.fromJSON(cell_data);
             };
         };
-        if (data.worksheets.length > 1) {
+        if (content.worksheets.length > 1) {
             IPython.dialog.modal({
                 title : "Multiple worksheets",
                 body : "This notebook has " + data.worksheets.length + " worksheets, " +
@@ -1643,10 +1642,14 @@ var IPython = (function (IPython) {
     Notebook.prototype.save_notebook = function () {
         // We may want to move the name/id/nbformat logic inside toJSON?
         var data = this.toJSON();
-        data.metadata.name = this.notebook_name;
-        data.nbformat = this.nbformat;
-        data.nbformat_minor = this.nbformat_minor;
-        
+        var model = {};
+        // Create a JSON model to be sent to the server.
+        model['name'] = this.notebook_name;
+        model['path'] = this.notebook_path;
+        model['content'] = data
+        model.content.nbformat = this.nbformat;
+        model.content.nbformat_minor = this.nbformat_minor;
+        console.log(model)
         // time the ajax call for autosave tuning purposes.
         var start =  new Date().getTime();
         // We do the call with settings so we can set cache to false.
@@ -1654,7 +1657,7 @@ var IPython = (function (IPython) {
             processData : false,
             cache : false,
             type : "PUT",
-            data : JSON.stringify(data),
+            data : JSON.stringify(model),
             headers : {'Content-Type': 'application/json'},
             success : $.proxy(this.save_notebook_success, this, start),
             error : $.proxy(this.save_notebook_error, this)
@@ -1723,13 +1726,14 @@ var IPython = (function (IPython) {
             type : "POST",
             dataType : "json",
             success:$.proxy(function (data, status, xhr){
-                notebook_name = data.name;
-                window.open(this._baseProjectUrl +'notebooks' + this.notebookPath()+ notebook_name);
+                var notebook_name = data.name;
+                window.open(this.baseProjectUrl() +'notebooks' + this.notebookPath()+ notebook_name, '_blank');
             }, this)
         };
-        var url = this._baseProjectUrl + 'notebooks' + path;
+        var url = this.baseProjectUrl() + 'api/notebooks' + path;
         $.ajax(url,settings);
     };
+
 
     Notebook.prototype.copy_notebook = function(){
         var path = this.notebookPath();

@@ -3,6 +3,7 @@
 Authors:
 
 * Brian Granger
+* Zach Sailer
 """
 
 #-----------------------------------------------------------------------------
@@ -18,9 +19,9 @@ Authors:
 
 import os
 import uuid
+from urllib import quote, unquote
 
 from tornado import web
-from urllib import quote, unquote
 
 from IPython.config.configurable import LoggingConfigurable
 from IPython.nbformat import current
@@ -43,9 +44,10 @@ class NotebookManager(LoggingConfigurable):
             """)
 
     def named_notebook_path(self, notebook_path):
-        """Given a notebook_path name, returns a (name, path) tuple, where
-        name is a .ipynb file, and path is the directory for the file, which
-        *always* starts *and* ends with a '/' character.
+        """Given a notebook_path (a URL path to notebook), returns a 
+        (name, path) tuple, where name is a .ipynb file, and path is the 
+        URL path that describes the file system path for the file. 
+        It *always* starts *and* ends with a '/' character.
 
         Parameters
         ----------
@@ -123,20 +125,20 @@ class NotebookManager(LoggingConfigurable):
                 os.mkdir(new)
             except:
                 raise TraitError("Couldn't create notebook dir %r" % new)
-                
-    allowed_formats = List([u'json',u'py'])
 
-    def load_notebook_names(self, path):
-        """Load the notebook names into memory.
+    def increment_filename(self, name, path='/'):
+        """Increment a filename to make it unique.
 
-        This should be called once immediately after the notebook manager
-        is created to load the existing notebooks into the mapping in
-        memory.
+        This exists for notebook stores that must have unique names. When a notebook
+        is created or copied this method constructs a unique filename, typically
+        by appending an integer to the name.
         """
-        self.list_notebooks(path)
+        return name
+
+    # Main notebook API
 
     def list_notebooks(self):
-        """List all notebooks.
+        """Return a list of notebook dicts without content.
 
         This returns a list of dicts, each of the form::
 
@@ -148,142 +150,63 @@ class NotebookManager(LoggingConfigurable):
         """
         raise NotImplementedError('must be implemented in a subclass')
 
-    def notebook_model(self, name, path='/', content=True):
-        """ Creates the standard notebook model """
-        last_modified, contents = self.read_notebook_model(name, path)
-        model = {"name": name, 
-                    "path": path,
-                    "last_modified": last_modified.ctime()}
-        if content is True:
-            model['content'] = contents
-        return model
-
-    def get_notebook(self, notebook_name, notebook_path='/', format=u'json'):
-        """Get the representation of a notebook in format by notebook_name."""
-        format = unicode(format)
-        if format not in self.allowed_formats:
-            raise web.HTTPError(415, u'Invalid notebook format: %s' % format)
-        kwargs = {}
-        last_mod, nb = self.read_notebook_object(notebook_name, notebook_path)
-        if format == 'json':
-            # don't split lines for sending over the wire, because it
-            # should match the Python in-memory format.
-            kwargs['split_lines'] = False
-        representation = current.writes(nb, format, **kwargs)
-        name = nb.metadata.get('name', 'notebook')
-        return last_mod, representation, name
-
-    def read_notebook_model(self, notebook_name, notebook_path='/'):
-        """Get the object representation of a notebook by notebook_id."""
+    def get_notebook_model(self, name, path='/', content=True):
+        """Get the notebook model with or without content."""
         raise NotImplementedError('must be implemented in a subclass')
 
-    def save_notebook(self, model, name=None, path='/'):
-        """Save the Notebook"""
-        if name is None:
-            name = self.increment_filename('Untitled', path)
-        if 'content' not in model:
-            metadata = current.new_metadata(name=name)
+    def save_notebook_model(self, model, name, path='/'):
+        """Save the notebook model and return the model with no content."""
+        raise NotImplementedError('must be implemented in a subclass')
+
+    def update_notebook_model(self, model, name, path='/'):
+        """Update the notebook model and return the model with no content."""
+        raise NotImplementedError('must be implemented in a subclass')
+
+    def delete_notebook_model(self, name, path):
+        """Delete notebook by name and path."""
+        raise NotImplementedError('must be implemented in a subclass')
+
+    def create_notebook_model(self, model=None, path='/'):
+        """Create a new untitled notebook and return its model with no content."""
+        name = self.increment_filename('Untitled', path)
+        if model is None:
+            model = {}
+            metadata = current.new_metadata(name=u'')
             nb = current.new_notebook(metadata=metadata)
-        else:
-            nb = model['content']
-        self.write_notebook_object()
-            
-
-    def save_new_notebook(self, data, notebook_path='/', name=None, format=u'json'):
-        """Save a new notebook and return its name.
-
-        If a name is passed in, it overrides any values in the notebook data
-        and the value in the data is updated to use that value.
-        """
-        if format not in self.allowed_formats:
-            raise web.HTTPError(415, u'Invalid notebook format: %s' % format)
-
-        try:
-            nb = current.reads(data.decode('utf-8'), format)
-        except:
-            raise web.HTTPError(400, u'Invalid JSON data')
-
-        if name is None:
-           try:
-               name = nb.metadata.name
-           except AttributeError:
-               raise web.HTTPError(400, u'Missing notebook name')
-        nb.metadata.name = name
-
-        notebook_name = self.write_notebook_object(nb, notebook_path=notebook_path)
-        return notebook_name
-
-    def save_notebook(self, data, notebook_path='/', name=None, format=u'json'):
-        """Save an existing notebook by notebook_name."""
-        if format not in self.allowed_formats:
-            raise web.HTTPError(415, u'Invalid notebook format: %s' % format)
-
-        try:
-            nb = current.reads(data.decode('utf-8'), format)
-        except:
-            raise web.HTTPError(400, u'Invalid JSON data')
-
-        if name is not None:
-            nb.metadata.name = name
-        self.write_notebook_object(nb, name, notebook_path, new_name)
-
-    def write_notebook_model(self, model):
-        """Write a notebook object and return its notebook_name.
-
-        If notebook_name is None, this method should create a new notebook_name.
-        If notebook_name is not None, this method should check to make sure it
-        exists and is valid.
-        """
-        raise NotImplementedError('must be implemented in a subclass')
-
-    def delete_notebook(self, notebook_name, notebook_path):
-        """Delete notebook by notebook_id."""
-        raise NotImplementedError('must be implemented in a subclass')
-
-    def increment_filename(self, name):
-        """Increment a filename to make it unique.
-
-        This exists for notebook stores that must have unique names. When a notebook
-        is created or copied this method constructs a unique filename, typically
-        by appending an integer to the name.
-        """
-        return name
-
-    def new_notebook(self, notebook_path='/'):
-        """Create a new notebook and return its notebook_name."""
-        name = self.increment_filename('Untitled', notebook_path)
-        metadata = current.new_metadata(name=name)
-        nb = current.new_notebook(metadata=metadata)
-        notebook_name = self.write_notebook_object(nb, notebook_path=notebook_path)
-        return notebook_name
+            model['content'] = nb
+            model['name'] = name
+            model['path'] = path
+            #model['last_modified'] = ???
+        model = self.save_notebook_model(model, name, path)
+        return model
 
     def copy_notebook(self, name, path='/'):
         """Copy an existing notebook and return its new notebook_name."""
         last_mod, nb = self.read_notebook_object(name, path)
-        name = nb.metadata.name + '-Copy'
+        name = name + '-Copy'
         name = self.increment_filename(name, path)
         nb.metadata.name = name
-        notebook_name = self.write_notebook_object(nb, notebook_path = path)
-        return notebook_name  
+        name = self.write_notebook_object(nb, path = path)
+        return name  
     
     # Checkpoint-related
     
-    def create_checkpoint(self, notebook_name, notebook_path='/'):
+    def create_checkpoint(self, name, path='/'):
         """Create a checkpoint of the current state of a notebook
         
         Returns a checkpoint_id for the new checkpoint.
         """
         raise NotImplementedError("must be implemented in a subclass")
     
-    def list_checkpoints(self, notebook_name, notebook_path='/'):
+    def list_checkpoints(self, name, path='/'):
         """Return a list of checkpoints for a given notebook"""
         return []
     
-    def restore_checkpoint(self, notebook_name, checkpoint_id, notebook_path='/'):
+    def restore_checkpoint(self, name, checkpoint_id, path='/'):
         """Restore a notebook from one of its checkpoints"""
         raise NotImplementedError("must be implemented in a subclass")
 
-    def delete_checkpoint(self, notebook_name, checkpoint_id, notebook_path='/'):
+    def delete_checkpoint(self, name, checkpoint_id, path='/'):
         """delete a checkpoint for a notebook"""
         raise NotImplementedError("must be implemented in a subclass")
     
