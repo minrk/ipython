@@ -183,7 +183,7 @@ class ModifyNotebookCheckpointsHandler(IPythonHandler):
         nbm = self.notebook_manager
         # path will have leading and trailing slashes, such as '/foo/bar/'
         name, path = nbm.named_notebook_path(notebook_path)
-        nbm.restore_checkpoint(name, checkpoint_id, path)
+        nbm.restore_checkpoint(checkpoint_id, name, path)
         self.set_status(204)
         self.finish()
     
@@ -194,7 +194,7 @@ class ModifyNotebookCheckpointsHandler(IPythonHandler):
         nbm = self.notebook_manager
         # path will have leading and trailing slashes, such as '/foo/bar/'
         name, path = nbm.named_notebook_path(notebook_path)
-        nbm.delete_checkpoint(name, checkpoint_id, path)
+        nbm.delete_checkpoint(checkpoint_id, name, path)
         self.set_status(204)
         self.finish()
         
