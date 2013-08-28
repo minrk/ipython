@@ -44,6 +44,8 @@ class NotebookManager(LoggingConfigurable):
             The directory to use for notebooks.
             """)
 
+    filename_ext = Unicode(u'.ipynb')
+
     def named_notebook_path(self, notebook_path):
         """Given notebook_path (*always* a URL path to notebook), returns a 
         (name, path) tuple, where name is a .ipynb file, and path is the 
@@ -114,7 +116,7 @@ class NotebookManager(LoggingConfigurable):
         return '/'.join([unquote(p) for p in parts])
 
     def _notebook_dir_changed(self, name, old, new):
-        """do a bit of validation of the notebook dir"""
+        """Do a bit of validation of the notebook dir."""
         if not os.path.isabs(new):
             # If we receive a non-absolute path, make it absolute.
             abs_new = os.path.abspath(new)
@@ -129,16 +131,19 @@ class NotebookManager(LoggingConfigurable):
             except:
                 raise TraitError("Couldn't create notebook dir %r" % new)
 
-    def increment_filename(self, name, path='/'):
-        """Increment a filename to make it unique.
-
-        This exists for notebook stores that must have unique names. When a notebook
-        is created or copied this method constructs a unique filename, typically
-        by appending an integer to the name.
-        """
-        return name
-
     # Main notebook API
+
+    def increment_filename(self, basename, path='/'):
+        """Increment a notebook filename without the .ipynb to make it unique.
+        
+        Parameters
+        ----------
+        basename : unicode
+            The name of a notebook without the ``.ipynb`` file extension.
+        path : unicode
+            The URL path of the notebooks directory
+        """
+        return basename
 
     def list_notebooks(self):
         """Return a list of notebook dicts without content.
@@ -179,18 +184,17 @@ class NotebookManager(LoggingConfigurable):
             model['content'] = nb
             model['name'] = name
             model['path'] = path
-            #model['last_modified'] = ???
         model = self.save_notebook_model(model, name, path)
         return model
 
-    def copy_notebook(self, name, path='/'):
-        """Copy an existing notebook and return its new notebook_name."""
-        last_mod, nb = self.read_notebook_object(name, path)
-        name = name + '-Copy'
-        name = self.increment_filename(name, path)
-        nb.metadata.name = name
-        name = self.write_notebook_object(nb, path = path)
-        return name  
+    def copy_notebook(self, name, path='/', content=False):
+        """Copy an existing notebook and return its new model."""
+        model = self.get_notebook_model(name, path)
+        name = os.path.splitext(name)[0] + '-Copy'
+        name = self.increment_filename(name, path) + self.filename_ext
+        model['name'] = name
+        model = self.save_notebook_model(model, name, path, content=content)
+        return model
     
     # Checkpoint-related
     
@@ -205,11 +209,11 @@ class NotebookManager(LoggingConfigurable):
         """Return a list of checkpoints for a given notebook"""
         return []
     
-    def restore_checkpoint(self, name, checkpoint_id, path='/'):
+    def restore_checkpoint(self, checkpoint_id, name, path='/'):
         """Restore a notebook from one of its checkpoints"""
         raise NotImplementedError("must be implemented in a subclass")
 
-    def delete_checkpoint(self, name, checkpoint_id, path='/'):
+    def delete_checkpoint(self, checkpoint_id, name, path='/'):
         """delete a checkpoint for a notebook"""
         raise NotImplementedError("must be implemented in a subclass")
     
