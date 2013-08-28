@@ -23,6 +23,7 @@ from urllib import quote, unquote
 
 from tornado import web
 
+from IPython.html.utils import url_path_join
 from IPython.config.configurable import LoggingConfigurable
 from IPython.nbformat import current
 from IPython.utils.traitlets import List, Dict, Unicode, TraitError
@@ -44,7 +45,7 @@ class NotebookManager(LoggingConfigurable):
             """)
 
     def named_notebook_path(self, notebook_path):
-        """Given a notebook_path (a URL path to notebook), returns a 
+        """Given notebook_path (*always* a URL path to notebook), returns a 
         (name, path) tuple, where name is a .ipynb file, and path is the 
         URL path that describes the file system path for the file. 
         It *always* starts *and* ends with a '/' character.
@@ -75,7 +76,7 @@ class NotebookManager(LoggingConfigurable):
         return name, path
         
     def get_os_path(self, fname=None, path='/'):
-        """Given a notebook name and a server URL path, return its file system
+        """Given a notebook name and a URL path, return its file system
         path.
 
         Parameters
@@ -101,14 +102,16 @@ class NotebookManager(LoggingConfigurable):
         return path
 
     def url_encode(self, path):
-        """Returns the path with all special characters URL encoded"""
-        parts = os.path.split(path)
-        return os.path.join(*[quote(p) for p in parts])
+        """Takes a URL path with special characters and returns 
+        the path with all these characters URL encoded"""
+        parts = path.split('/')
+        return '/'.join([quote(p) for p in parts])
 
     def url_decode(self, path):
-        """Returns the URL with special characters decoded"""
-        parts = os.path.split(path)
-        return os.path.join(*[unquote(p) for p in parts])
+        """Takes a URL path with encoded special characters and 
+        returns the URL with special characters decoded"""
+        parts = path.split('/')
+        return '/'.join([unquote(p) for p in parts])
 
     def _notebook_dir_changed(self, name, old, new):
         """do a bit of validation of the notebook dir"""
