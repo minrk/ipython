@@ -29,16 +29,17 @@ data-base-kernel-url="{{base_kernel_url}}"
     </ul>
 
     <div class="tab-content">
-      <a id="btn-reset" href="#!revertfiles" class="btn"><span>revert files</span></a>
       <div id="breadcrumb">
       </div>
       <div id="ls">
       </div>
       <div id="fileadmin">
           <div class="mkdir ib">
-              <input id="dirname" placeholder="new folder name" /><a class="btn"><span>create folder</span></a></div>
+              <input id="dirname" placeholder="new folder name" /><a class="btn"><span>create folder</span></a>
+          </div>
           <div class="upload ib">
-              <input type="file" name="fileupload" id="fileupload" /><a class="btn"><span>upload here</span></a></div>
+              <input type="file" name="fileupload" id="fileupload" /><a class="btn"><span>upload here</span></a>
+            </div>
       </div>
       <div id="fileview">
       </div>
@@ -100,5 +101,6 @@ data-base-kernel-url="{{base_kernel_url}}"
     <script src="{{static_url("base/js/dialog.js") }}" type="text/javascript" charset="utf-8"></script>
     <script src="{{static_url("tree/js/notebooklist.js") }}" type="text/javascript" charset="utf-8"></script>
     <script src="{{static_url("tree/js/clusterlist.js") }}" type="text/javascript" charset="utf-8"></script>
+    <script src="{{static_url("tree/js/tree2.js") }}" type="text/javascript" charset="utf-8"></script>
     <script src="{{static_url("tree/js/main.js") }}" type="text/javascript" charset="utf-8"></script>
 {% endblock %}
