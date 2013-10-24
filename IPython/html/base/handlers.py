@@ -168,6 +168,10 @@ class IPythonHandler(AuthenticatedHandler):
         return self.settings['session_manager']
     
     @property
+    def file_manager(self):
+        return self.settings['file_manager']
+    
+    @property
     def project_dir(self):
         return self.notebook_manager.notebook_dir
     
