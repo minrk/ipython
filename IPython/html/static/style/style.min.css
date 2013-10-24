@@ -1461,6 +1461,7 @@ a.file:hover b.del{background:url(../img/delete_icon.png) no-repeat 0px 100%;}
 #breadcrumb{padding:0 12px;font-size:20px;letter-spacing:-1px;font-weight:bold;}
 #breadcrumb a{text-decoration:none;color:#4183C4;}
 #breadcrumb a:hover{text-decoration:underline;}
+span.breadcrumb{padding:8px 4px;background-color:inherit;}
 .ansibold{font-weight:bold;}
 .ansiblack{color:black;}
 .ansired{color:darkred;}
