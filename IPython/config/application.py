@@ -31,7 +31,7 @@ from IPython.external.decorator import decorator
 
 from IPython.config.configurable import SingletonConfigurable
 from IPython.config.loader import (
-    KVArgParseConfigLoader, PyFileConfigLoader, Config, ArgumentError, ConfigFileNotFound, JsonFileConfigLoader
+    KVArgParseConfigLoader, PyFileConfigLoader, Config, ArgumentError, ConfigFileNotFound, JSONFileConfigLoader
 )
 
 from IPython.utils.traitlets import (
@@ -504,7 +504,7 @@ class Application(SingletonConfigurable):
     def load_config_file(self, filename, path=None):
         """Load a .py based config file by filename and path."""
         pyloader = PyFileConfigLoader(filename, path=path)
-        jsonloader = JsonFileConfigLoader(filename[:-2]+'json', path=path)
+        jsonloader = JSONFileConfigLoader(filename[:-2]+'json', path=path)
         config_found = False
         config = None
         for loader in [pyloader, jsonloader]:

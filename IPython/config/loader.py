@@ -358,7 +358,7 @@ class FileConfigLoader(ConfigLoader):
         """Try to find the file by searching the paths."""
         self.full_filename = filefind(self.filename, self.path)
 
-class JsonFileConfigLoader(FileConfigLoader):
+class JSONFileConfigLoader(FileConfigLoader):
     """A Json file loader for config"""
 
     def load_config(self):
@@ -378,10 +378,13 @@ class JsonFileConfigLoader(FileConfigLoader):
 
     def _convert_to_config(self, dictionary):
         if 'version' not in dictionary:
-            raise ValueError('JSON config file has no version number, cowardly giving up')
-        version = dictionary.pop('version')
+            version = dictionary.pop('version')
+        else :
+            version = 1
+            warn.warn("Unrecognized JSON config file version, assuming version : {}".format(version))
+
         if version == 1:
-            return dictionary
+            return Config(dictionary)
         else :
             raise ValueError('Unknown version of JSON config file : version number {n}'.format(version))
 
