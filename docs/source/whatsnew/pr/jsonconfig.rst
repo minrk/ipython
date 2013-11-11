@@ -1,3 +1,3 @@
-* IPython can know load config expressed in json files. Json file should have
-  the same name as their `.py` counterpart and will be loaded with higher
-  priority if found and valid.
+* IPython config objects can be loaded from and serialized to JSON.
+  JSON config file have the same base name as their ``.py`` counterpart,
+  and will be loaded with higher priority if found.
