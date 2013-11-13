@@ -85,9 +85,9 @@ def execute(code='', kc=None, **kwargs):
     nt.assert_equal(busy['content']['execution_state'], 'busy')
     
     if not kwargs.get('silent'):
-        pyin = kc.get_iopub_msg(timeout=TIMEOUT)
-        validate_message(pyin, 'pyin', msg_id)
-        nt.assert_equal(pyin['content']['code'], code)
+        execute_input = kc.get_iopub_msg(timeout=TIMEOUT)
+        validate_message(execute_input, 'execute_input', msg_id)
+        nt.assert_equal(execute_input['content']['code'], code)
     
     return msg_id, reply['content']
 
