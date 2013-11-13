@@ -44,9 +44,9 @@ from .zmqshell import ZMQInteractiveShell
 # Main kernel class
 #-----------------------------------------------------------------------------
 
-protocol_version = list(release.kernel_protocol_version_info)
-ipython_version = list(release.version_info)
-language_version = list(sys.version_info[:3])
+protocol_version = release.kernel_protocol_version
+ipython_version = release.version
+language_version = sys.version.split()[0]
 
 
 class Kernel(Configurable):
