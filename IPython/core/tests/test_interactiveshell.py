@@ -625,7 +625,7 @@ def test_user_variables():
     
     ip.user_ns['dummy'] = d = DummyRepr()
     keys = set(['dummy', 'doesnotexist'])
-    r = ip.user_variables(keys)
+    r = ip.user_expressions({ key:key for key in keys})
 
     nt.assert_equal(keys, set(r.keys()))
     dummy = r['dummy']
@@ -640,7 +640,7 @@ def test_user_variables():
     
     dne = r['doesnotexist']
     nt.assert_equal(dne['status'], 'error')
-    nt.assert_equal(dne['ename'], 'KeyError')
+    nt.assert_equal(dne['ename'], 'NameError')
     
     # back to text only
     ip.display_formatter.active_types = ['text/plain']

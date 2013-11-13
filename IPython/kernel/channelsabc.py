@@ -50,7 +50,7 @@ class ShellChannelABC(ChannelABC):
 
     @abc.abstractmethod
     def execute(self, code, silent=False, store_history=True,
-                user_variables=None, user_expressions=None, allow_stdin=None):
+                user_expressions=None, allow_stdin=None):
         pass
 
     @abc.abstractmethod

@@ -284,7 +284,6 @@ var IPython = (function (IPython) {
      * @param {object} [options]
      *      @param [options.silent=false] {Boolean}
      *      @param [options.user_expressions=empty_dict] {Dict}
-     *      @param [options.user_variables=empty_list] {List od Strings}
      *      @param [options.allow_stdin=false] {Boolean} true|false
      *
      * @example
@@ -294,7 +293,6 @@ var IPython = (function (IPython) {
      *
      *      options = {
      *        silent : true,
-     *        user_variables : [],
      *        user_expressions : {},
      *        allow_stdin : false
      *      }
@@ -324,7 +322,6 @@ var IPython = (function (IPython) {
             code : code,
             silent : true,
             store_history : false,
-            user_variables : [],
             user_expressions : {},
             allow_stdin : false
         };

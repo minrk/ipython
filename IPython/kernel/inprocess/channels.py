@@ -93,11 +93,10 @@ class InProcessShellChannel(InProcessChannel):
     #--------------------------------------------------------------------------
 
     def execute(self, code, silent=False, store_history=True,
-                user_variables=[], user_expressions={}, allow_stdin=None):
+                user_expressions={}, allow_stdin=None):
         if allow_stdin is None:
             allow_stdin = self.allow_stdin
         content = dict(code=code, silent=silent, store_history=store_history,
-                       user_variables=user_variables,
                        user_expressions=user_expressions,
                        allow_stdin=allow_stdin)
         msg = self.client.session.msg('execute_request', content)
