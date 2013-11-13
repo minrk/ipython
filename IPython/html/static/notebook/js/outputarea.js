@@ -249,7 +249,11 @@ var IPython = (function (IPython) {
             json.prompt_number = content.execution_count;
             json = this.convert_mime_types(json, content.data);
             json.metadata = this.convert_mime_types({}, content.metadata);
-        } else if (msg_type === "pyerr") {
+        } else if (msg_type === "error") {
+            // pyerr message has been renamed to error,
+            // but the nbformat has not been updated,
+            // so transform back to pyerr for json.
+            json.output_type = "pyerr";
             json.ename = content.ename;
             json.evalue = content.evalue;
             json.traceback = content.traceback;
@@ -294,7 +298,7 @@ var IPython = (function (IPython) {
         if (json.output_type === 'pyout') {
             this.append_execute_result(json, dynamic);
         } else if (json.output_type === 'pyerr') {
-            this.append_pyerr(json);
+            this.append_error(json);
         } else if (json.output_type === 'display_data') {
             this.append_display_data(json, dynamic);
         } else if (json.output_type === 'stream') {
@@ -408,7 +412,7 @@ var IPython = (function (IPython) {
     };
 
 
-    OutputArea.prototype.append_pyerr = function (json) {
+    OutputArea.prototype.append_error = function (json) {
         var tb = json.traceback;
         if (tb !== undefined && tb.length > 0) {
             var s = '';

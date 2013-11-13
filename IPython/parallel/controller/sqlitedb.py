@@ -130,7 +130,7 @@ class SQLiteDB(BaseDB):
             'queue' ,
             'execute_input' ,
             'execute_result',
-            'pyerr',
+            'error',
             'stdout',
             'stderr',
         ])
@@ -154,7 +154,7 @@ class SQLiteDB(BaseDB):
             'queue' : 'text',
             'execute_input' : 'text',
             'execute_result' : 'text',
-            'pyerr' : 'text',
+            'error' : 'text',
             'stdout' : 'text',
             'stderr' : 'text',
         })
@@ -265,7 +265,7 @@ class SQLiteDB(BaseDB):
                 queue text,
                 execute_input text,
                 execute_result text,
-                pyerr text,
+                error text,
                 stdout text,
                 stderr text)
                 """%self.table)

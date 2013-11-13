@@ -411,7 +411,7 @@ class IPKernelApp(BaseIPythonApplication, InteractiveShellApp):
         shell = self.shell
         _showtraceback = shell._showtraceback
         try:
-            # replace pyerr-sending traceback with stderr
+            # replace error-sending traceback with stderr
             def print_tb(etype, evalue, stb):
                 print ("GUI event loop or pylab initialization failed",
                        file=io.stderr)
