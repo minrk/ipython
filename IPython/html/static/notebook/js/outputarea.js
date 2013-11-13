@@ -241,7 +241,11 @@ var IPython = (function (IPython) {
         } else if (msg_type === "display_data") {
             json = this.convert_mime_types(json, content.data);
             json.metadata = this.convert_mime_types({}, content.metadata);
-        } else if (msg_type === "pyout") {
+        } else if (msg_type === "execute_result") {
+            // pyout message has been renamed to execute_result,
+            // but the nbformat has not been updated,
+            // so transform back to pyout for json.
+            json.output_type = "pyout";
             json.prompt_number = content.execution_count;
             json = this.convert_mime_types(json, content.data);
             json.metadata = this.convert_mime_types({}, content.metadata);
@@ -298,7 +302,7 @@ var IPython = (function (IPython) {
         }
 
         if (json.output_type === 'pyout') {
-            this.append_pyout(json, dynamic);
+            this.append_execute_result(json, dynamic);
         } else if (json.output_type === 'pyerr') {
             this.append_pyerr(json);
         } else if (json.output_type === 'display_data') {
@@ -399,7 +403,7 @@ var IPython = (function (IPython) {
     };
 
 
-    OutputArea.prototype.append_pyout = function (json, dynamic) {
+    OutputArea.prototype.append_execute_result = function (json, dynamic) {
         var n = json.prompt_number || ' ';
         var toinsert = this.create_output_area();
         if (this.prompt_area) {

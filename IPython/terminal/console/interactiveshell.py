@@ -221,7 +221,7 @@ class ZMQTerminalInteractiveShell(TerminalInteractiveShell):
         """ Method to process subscribe channel's messages
 
            This method consumes and processes messages on the IOPub channel,
-           such as stdout, stderr, pyout and status.
+           such as stdout, stderr, execute_result and status.
            
            It only displays output that is caused by the given msg_id
         """
@@ -245,7 +245,7 @@ class ZMQTerminalInteractiveShell(TerminalInteractiveShell):
                         print(sub_msg["content"]["data"], file=io.stderr, end="")
                         io.stderr.flush()
 
-                elif msg_type == 'pyout':
+                elif msg_type == 'execute_result':
                     self.execution_count = int(sub_msg["content"]["execution_count"])
                     format_dict = sub_msg["content"]["data"]
                     self.handle_rich_data(format_dict)
