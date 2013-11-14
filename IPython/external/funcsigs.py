@@ -167,9 +167,7 @@ def signature(obj):
             sig = signature(call)
 
     if sig is not None:
-        # For classes and objects we skip the first parameter of their
-        # __call__, __new__, or __init__ methods
-        return sig.replace(parameters=tuple(sig.parameters.values())[1:])
+        return sig
 
     if isinstance(obj, types.BuiltinFunctionType):
         # Raise a nicer error message for builtins
