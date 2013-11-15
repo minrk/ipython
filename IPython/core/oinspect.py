@@ -42,6 +42,11 @@ from IPython.utils.wildcard import list_namespace
 from IPython.utils.coloransi import *
 from IPython.utils.py3compat import cast_unicode, string_types
 
+try:
+    from inspect import signature
+except ImportError:
+    from IPython.external.funcsigs import signature
+
 #****************************************************************************
 # Builtin color schemes
 
@@ -196,7 +201,6 @@ def getargspec(obj):
     args, varargs, varkw = inspect.getargs(func_obj.__code__)
     return args, varargs, varkw, func_obj.__defaults__
 
-
 def format_argspec(argspec):
     """Format argspect, convenience wrapper around inspect's.
 
@@ -350,7 +354,7 @@ class Inspector:
         exception is suppressed."""
 
         try:
-            hdef = oname + inspect.formatargspec(*getargspec(obj))
+            hdef = "{}{}".format(oname, signature(obj))
             return cast_unicode(hdef)
         except:
             return None
@@ -802,13 +806,28 @@ class Inspector:
 
         if callable_obj:
             try:
-                args,  varargs, varkw, defaults = getargspec(callable_obj)
+                sig = signature(callable_obj)
             except (TypeError, AttributeError):
                 # For extensions/builtins we can't retrieve the argspec
                 pass
             else:
-                out['argspec'] = dict(args=args, varargs=varargs,
-                                      varkw=varkw, defaults=defaults)
+                parameters = []
+                for p in sig.parameters.values():
+                    d = {}
+                    d['name'] = p.name
+                    d['default'] = None if p.default is p.empty else repr(p.default)
+                    d['annotation'] = None if p.annotation is p.empty else str(p.annotation)
+                    d['kind'] = str(p.kind)
+                    parameters.append(d)
+                return_annotation = None if sig.return_annotation is p.empty else str(sig.return_annotation)
+                out['signature'] = [
+                    {
+                        'parameters' : parameters,
+                        'return_annotation' : return_annotation,
+                    }
+                ]
+                # out['argspec'] = dict(args=args, varargs=varargs,
+                #                       varkw=varkw, defaults=defaults)
 
         return object_info(**out)
 
