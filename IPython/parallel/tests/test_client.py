@@ -190,17 +190,21 @@ class TestClient(ClusterTestCase):
         ids = self.client.ids
         id0 = ids[0]
         qs = self.client.queue_status(targets=id0)
-        self.assertTrue(isinstance(qs, dict))
-        self.assertEqual(sorted(qs.keys()), ['completed', 'queue', 'tasks'])
+        self.assertIsInstance(qs, dict)
+        self.assertEqual(sorted(qs), ['completed', 'queue', 'tasks'])
         allqs = self.client.queue_status()
-        self.assertTrue(isinstance(allqs, dict))
-        intkeys = list(allqs.keys())
-        intkeys.remove('unassigned')
-        self.assertEqual(sorted(intkeys), sorted(self.client.ids))
+        self.assertIsInstance(allqs, dict)
+        print(allqs)
         unassigned = allqs.pop('unassigned')
+        int_keys = sorted(allqs)
+        print(self.client.ids)
+        sorted_ids = sorted(self.client.ids)
+        # print statement debug
+        print(int_keys, sorted_ids)
+        self.assertEqual(int_keys, sorted_ids)
         for eid,qs in allqs.items():
-            self.assertTrue(isinstance(qs, dict))
-            self.assertEqual(sorted(qs.keys()), ['completed', 'queue', 'tasks'])
+            self.assertIsInstance(qs, dict)
+            self.assertEqual(sorted(qs), ['completed', 'queue', 'tasks'])
 
     def test_shutdown(self):
         ids = self.client.ids
