@@ -324,8 +324,9 @@ class TestClient(ClusterTestCase):
         # step 2. wait for all requests to be done
         # timeout 5s, polling every 100ms
         qs = rc.queue_status()
+        eids = [ key for key in qs if key != 'unassigned' ]
         for i in range(50):
-            if qs['unassigned'] or any(qs[eid]['tasks'] + qs[eid]['queue'] for eid in qs if eid != 'unassigned'):
+            if qs['unassigned'] or any(qs[eid]['tasks'] + qs[eid]['queue'] for eid in eids):
                 time.sleep(0.1)
                 qs = rc.queue_status()
             else:
@@ -333,7 +334,8 @@ class TestClient(ClusterTestCase):
         
         # ensure Hub up to date:
         self.assertEqual(qs['unassigned'], 0)
-        for eid in rc.ids:
+        
+        for eid in eids:
             self.assertEqual(qs[eid]['tasks'], 0)
             self.assertEqual(qs[eid]['queue'], 0)
     
