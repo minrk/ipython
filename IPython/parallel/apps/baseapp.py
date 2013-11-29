@@ -265,7 +265,7 @@ class BaseParallelApplication(BaseIPythonApplication):
         else:
             try:
                 p = Popen(['ps','x'], stdout=PIPE, stderr=PIPE)
-                output,_ = p.communicate()
+                output, _ = p.communicate()
             except OSError:
                 self.log.warn(
                     "Could not determine whether pid %i is running via `ps x`. "

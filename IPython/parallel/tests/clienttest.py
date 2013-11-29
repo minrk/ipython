@@ -121,10 +121,13 @@ class ClusterTestCase(BaseZMQTestCase):
         """wait for our engines to connect."""
         n = len(self.engines)+self.base_engine_count
         tic = time.time()
-        while time.time()-tic < timeout and len(self.client.ids) < n:
+        while time.time()-tic < timeout \
+        and len(self.client.ids) < n \
+        and len(self.client.queue_status()) <= n:
             time.sleep(0.1)
         
         assert not len(self.client.ids) < n, "waiting for engines timed out"
+        assert not len(self.client.queue_status()) <= n, "waiting for engines timed out"
     
     def client_wait(self, client, jobs=None, timeout=-1):
         """my wait wrapper, sets a default finite timeout to avoid hangs"""
