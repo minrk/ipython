@@ -336,7 +336,17 @@ class FrontendWidget(HistoryConsoleWidget, BaseFrontendMixin):
     #---------------------------------------------------------------------------
     # 'BaseFrontendMixin' abstract interface
     #---------------------------------------------------------------------------
-
+    
+    def _unhandled_message(self, msg):
+        """write unhandled message notices to the qtconsole"""
+        if not self._is_from_this_session(msg):
+            return
+        self._append_plain_text(
+            "Unhandled message type: %s\n" % msg['header']['msg_type'],
+            before_prompt=True,
+        )
+        self.log.debug("Unhandled message: %s", msg)
+    
     def _handle_complete_reply(self, rep):
         """ Handle replies for tab completion.
         """

@@ -133,10 +133,23 @@ class BaseFrontendMixin(object):
             given message.
         """
         msg_type = msg['header']['msg_type']
-        handler = getattr(self, '_handle_' + msg_type, None)
-        if handler:
-            handler(msg)
-
+        handler = getattr(self, '_handle_' + msg_type, self._unhandled_message)
+        handler(msg)
+    
+    def _unhandled_message(self, msg):
+        if not self._is_from_this_session(msg):
+            return
+        self.log.warn("Unhandled message type: %s", msg['header']['msg_type'])
+        self.log.debug("Unhandled message: %s", msg)
+    
+    def _handle_pyin(self, msg):
+        """by default, silently ignore pyin"""
+        pass
+    
+    def _handle_pyerr(self, msg):
+        """by default, silently ignore pyerr"""
+        pass
+    
     def _is_from_this_session(self, msg):
         """ Returns whether a reply from the kernel originated from a request
             from this frontend.
