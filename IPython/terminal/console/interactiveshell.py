@@ -269,6 +269,17 @@ class ZMQTerminalInteractiveShell(TerminalInteractiveShell):
                         # if it was an image, we handled it by now
                         if 'text/plain' in data:
                             print(data['text/plain'])
+                elif msg_type in ('pyin', 'pyerr'):
+                    pass
+                else:
+                    print("Unhandled message: %s" % msg_type)
+            elif parent.get('session') == self.session.session:
+                # received a message from me, but it is associated with a different msg
+                # not sure what should be done here
+                pass
+            else:
+                # this is where code to display output from other frontends would go
+                pass
 
     _imagemime = {
         'image/png': 'png',
