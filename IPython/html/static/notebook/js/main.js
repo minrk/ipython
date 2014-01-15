@@ -49,9 +49,9 @@ function (marked) {
     var baseProjectUrl = $('body').data('baseProjectUrl');
     var notebookPath = $('body').data('notebookPath');
     var notebookName = $('body').data('notebookName');
+    IPython.OutputArea.secret = $('body').data('outputSecret');
     notebookName = decodeURIComponent(notebookName);
     notebookPath = decodeURIComponent(notebookPath);
-    console.log(notebookName);
     if (notebookPath == 'None'){
         notebookPath = "";
     }

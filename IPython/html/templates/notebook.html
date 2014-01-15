@@ -26,6 +26,7 @@ data-base-project-url="{{base_project_url}}"
 data-base-kernel-url="{{base_kernel_url}}"
 data-notebook-name="{{notebook_name}}"
 data-notebook-path="{{notebook_path}}"
+data-output-secret="{{output_secret}}"
 class="notebook_app"
 
 {% endblock %}
@@ -269,6 +270,7 @@ class="notebook_app"
 <script src="{{ static_url("notebook/js/codemirror-ipython.js") }}" charset="utf-8"></script>
 
 <script src="{{ static_url("components/highlight.js/build/highlight.pack.js") }}" charset="utf-8"></script>
+<script src="{{ static_url("components/cryptojs/rollups/hmac-sha256.js") }}" charset="utf-8"></script>
 
 <script src="{{ static_url("dateformat/date.format.js") }}" charset="utf-8"></script>
 

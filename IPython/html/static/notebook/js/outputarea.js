@@ -309,7 +309,7 @@ var IPython = (function (IPython) {
         });
         return json;
     };
-
+    
     OutputArea.prototype.append_output = function (json) {
         this.expand();
         // Clear the output if clear is queued.
@@ -330,6 +330,12 @@ var IPython = (function (IPython) {
             this.append_display_data(json);
         } else if (json.output_type === 'stream') {
             this.append_stream(json);
+        }
+        
+        if (!this.loading_from_json &&
+            (json.output_type === 'display_data' || json.output_type == 'pyout')
+        ) {
+            this.sign_output(json);
         }
         this.outputs.push(json);
         
@@ -526,12 +532,55 @@ var IPython = (function (IPython) {
         'text/plain'
     ];
 
+    OutputArea.need_signature = {
+        'text/html' : true,
+        'application/javascript' : true,
+        'text/markdown' : true
+    };
+    
+    OutputArea.secret = ''; // this should be set 
+    
+    OutputArea.prototype.sign = function (text) {
+        if (OutputArea.secret === '') return '';
+        return CryptoJS.HmacSHA256(text, OutputArea.secret).toString();
+    };
+    
+    OutputArea.prototype.sign_output = function (json) {
+        if (OutputArea.secret === '') return;
+        if (!json.metadata) json.metadata = {};
+        for (var key in OutputArea.need_signature) {
+            if (json[key] !== undefined && OutputArea.need_signature[key]) {
+                if (!json.metadata[key]) json.metadata[key] = {};
+                json.metadata[key].signature = this.sign(json[key]);
+            }
+        }
+    };
+    
+    OutputArea.prototype.check_signature = function (json, mime) {
+        // Does the signature match?
+        var text = json[mime];
+        var md_sig = _get_metadata_key(json.metadata, 'signature', mime);
+        var sig = this.sign(text);
+        return (sig === md_sig);
+    };
+    
     OutputArea.prototype.append_mime_type = function (json, element) {
-
         for (var type_i in OutputArea.display_order) {
             var type = OutputArea.display_order[type_i];
             var append = OutputArea.append_map[type];
             if ((json[type] !== undefined) && append) {
+                if (this.loading_from_json &&
+                    OutputArea.need_signature[type] &&
+                    !this.check_signature(json, type)
+                    ) {
+                        // not trusted show warning and do not display
+                        var content = {
+                            text : "Untrusted " + type + " output ignored.",
+                            stream : "stderr"
+                        }
+                        this.append_stream(content);
+                        continue;
+                }
                 var md = json.metadata || {};
                 append.apply(this, [json[type], md, element]);
                 return true;
@@ -769,12 +818,9 @@ var IPython = (function (IPython) {
         var len = outputs.length;
         var data;
 
-        // We don't want to display javascript on load, so remove it from the
-        // display order for the duration of this function call, but be sure to
-        // put it back in there so incoming messages that contain javascript
-        // representations get displayed
-        var js_index = OutputArea.display_order.indexOf('application/javascript');
-        OutputArea.display_order.splice(js_index, 1);
+        // We don't want to display unauthorized javascript or HTML on load,
+        // so note that we are loading from json
+        this.loading_from_json = true;
 
         for (var i=0; i<len; i++) {
             data = outputs[i];
@@ -788,9 +834,7 @@ var IPython = (function (IPython) {
             
             this.append_output(data);
         }
-
-        // reinsert javascript into display order, see note above
-        OutputArea.display_order.splice(js_index, 0, 'application/javascript');
+        this.loading_from_json = false;
     };
 
 

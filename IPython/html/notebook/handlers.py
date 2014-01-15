@@ -29,6 +29,10 @@ from ..utils import url_path_join, url_escape
 
 
 class NotebookHandler(IPythonHandler):
+    
+    @property
+    def output_secret(self):
+        return self.settings.get('output_secret', '')
 
     @web.authenticated
     def get(self, path='', name=None):
@@ -50,6 +54,7 @@ class NotebookHandler(IPythonHandler):
             notebook_name=name,
             kill_kernel=False,
             mathjax_url=self.mathjax_url,
+            output_secret=self.output_secret,
             )
         )
 

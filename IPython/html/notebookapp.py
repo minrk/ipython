@@ -18,6 +18,7 @@ from __future__ import print_function
 #-----------------------------------------------------------------------------
 
 # stdlib
+import base64
 import errno
 import io
 import json
@@ -169,6 +170,7 @@ class NotebookWebApplication(web.Application):
             cookie_secret=ipython_app.cookie_secret,
             login_url=url_path_join(base_project_url,'/login'),
             password=ipython_app.password,
+            output_secret=ipython_app.output_secret,
             
             # managers
             kernel_manager=kernel_manager,
@@ -378,6 +380,31 @@ class NotebookApp(BaseIPythonApplication):
                       The string should be of the form type:salt:hashed-password.
                       """
     )
+    
+    output_secret = Unicode(config=True,
+        help="""The secret key with which unsafe (html, javascript) outputs are signed."""
+    )
+    def _output_secret_default(self):
+        if not self.profile_dir:
+            # called prematurely
+            return u''
+        secret_file = os.path.join(self.profile_dir.security_dir, 'output_secret')
+        if os.path.exists(secret_file):
+            with io.open(secret_file) as f:
+                return f.read()
+        else:
+            secret = base64.encodestring(os.urandom(1024)).decode('ascii')
+            self.log.info("Writing output secret to %s", secret_file)
+            with io.open(secret_file, 'w', encoding='utf8') as f:
+                f.write(secret)
+            try:
+                os.chmod(secret_file, 0o600)
+            except OSError:
+                self.log.warn(
+                    "Could not set permissions on %s",
+                    secret_file
+                )
+            return secret
 
     open_browser = Bool(True, config=True,
                         help="""Whether to open in a browser after starting.
