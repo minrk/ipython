@@ -221,8 +221,7 @@ class="notebook_app"
 
                 {% for helplinks in sections %}
                     {% for link in helplinks %}
-                        <!-- <li><a href="{{link[0]}}" {% 'target="_blank"' if link[2] %}>{{link[1]}}{% '<i class="icon-external-link"></i>' if link[2]%}</a></li> -->
-                        <li><a href="{{link[0]}}">{{link[1]}}</a></li>
+                        <li><a href="{{link[0]}}" {{'target="_blank"' if link[2]}}>{{link[1]}}{{'<i class="icon-external-link"></i>' if link[2]}}</a></li>
                     {% endfor %}
                     {% if not loop.last %}
                         <li class="divider"></li>
