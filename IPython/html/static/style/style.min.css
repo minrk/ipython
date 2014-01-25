@@ -1562,6 +1562,7 @@ p{margin-bottom:0;}
 #menubar .navbar{margin-bottom:8px;}
 .nav-wrapper{border-bottom:1px solid #d4d4d4;}
 #menubar li.dropdown{line-height:12px;}
+i.menu-icon{padding-top:4px;}
 #notification_area{z-index:10;}
 .notification_widget{color:#777777;padding:1px 12px;margin:2px 4px;z-index:10;border:1px solid #ccc;border-radius:4px;background:rgba(240, 240, 240, 0.5);}
 div#pager_splitter{height:8px;}
