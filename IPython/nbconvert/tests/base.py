@@ -13,12 +13,13 @@ Contains base test class for nbconvert
 # Imports
 #-----------------------------------------------------------------------------
 
+import io
 import os
 import glob
 import shutil
 import unittest
 
-import IPython
+from IPython.nbformat import current
 from IPython.utils.tempdir import TemporaryWorkingDirectory
 from IPython.utils.process import get_output_error_code
 from IPython.testing.tools import get_ipython_cmd
@@ -110,7 +111,12 @@ class TestsBase(unittest.TestCase):
 
         #Return directory handler
         return temp_dir
-
+    
+    def create_empty_notebook(self, path):
+        nb = current.new_notebook()
+        nb.worksheets.append(current.new_worksheet())
+        with io.open(path, 'w', encoding='utf-8') as f:
+            current.write(nb, f, 'json')
 
     def copy_files_to(self, copy_filenames, dest='.'):
         "Copy test files into the destination directory"
@@ -121,20 +127,13 @@ class TestsBase(unittest.TestCase):
             for match in glob.glob(os.path.join(files_path, pattern)):
                 shutil.copyfile(match, os.path.join(dest, os.path.basename(match)))
 
-
     def _get_files_path(self):
+        """Get the path for test files"""
+        return os.path.join(os.path.dirname(__file__), 'files')
 
-        #Get the relative path to this module in the IPython directory.
-        names = self.__module__.split('.')[1:-1]
-        names.append('files')
-        
-        #Build a path using the IPython directory and the relative path we just
-        #found.
-        path = IPython.__path__[0]
-        for name in names:
-            path = os.path.join(path, name)
-        return path
-
+    def _get_notebook(self, nb_name='notebook2.ipynb'):
+        """Get a single notebook path"""
+        return os.path.join(self._get_files_path(), nb_name)
 
     def call(self, parameters, ignore_return_code=False):
         """

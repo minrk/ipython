@@ -36,9 +36,6 @@ class ExportersTestsBase(TestsBase):
     exporter_class = None
     should_include_raw = None
     
-    def _get_notebook(self, nb_name='notebook2.ipynb'):
-        return os.path.join(self._get_files_path(), nb_name)
-    
     @onlyif_cmds_exist('pandoc')
     def test_raw_cell_inclusion(self):
         """test raw cell inclusion based on raw_mimetype metadata"""
