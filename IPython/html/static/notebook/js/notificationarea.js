@@ -68,7 +68,9 @@ var IPython = (function (IPython) {
     };
 
     NotificationArea.prototype.init_notification_widgets = function() {
+        var knw = this.new_notification_widget('kernel');
         var $kernel_indic = $("#kernel_indicator");
+
         // Kernel events
         $([IPython.events]).on('status_idle.Kernel',function () {
             IPython.save_widget.update_document_title();
