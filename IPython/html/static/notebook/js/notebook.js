@@ -24,7 +24,7 @@ var IPython = (function (IPython) {
      */
     var Notebook = function (selector, options) {
         this.options = options = options || {};
-        this.base_project_url = options.base_project_url;
+        this.base_url = options.base_url;
         this.notebook_path = options.notebook_path;
         this.notebook_name = options.notebook_name;
         this.element = $(selector);
@@ -1681,7 +1681,7 @@ var IPython = (function (IPython) {
         }
         $([IPython.events]).trigger('notebook_saving.Notebook');
         var url = utils.url_join_encode(
-            this.base_project_url,
+            this.base_url,
             'api/notebooks',
             this.notebook_path,
             this.notebook_name
@@ -1742,7 +1742,7 @@ var IPython = (function (IPython) {
 
     Notebook.prototype.new_notebook = function(){
         var path = this.notebook_path;
-        var base_project_url = this.base_project_url;
+        var base_url = this.base_url;
         var settings = {
             processData : false,
             cache : false,
@@ -1753,7 +1753,7 @@ var IPython = (function (IPython) {
                 var notebook_name = data.name;
                 window.open(
                     utils.url_join_encode(
-                        base_project_url,
+                        base_url,
                         'notebooks',
                         path,
                         notebook_name
@@ -1763,7 +1763,7 @@ var IPython = (function (IPython) {
             }
         };
         var url = utils.url_join_encode(
-            base_project_url,
+            base_url,
             'api/notebooks',
             path
         );
@@ -1773,7 +1773,7 @@ var IPython = (function (IPython) {
 
     Notebook.prototype.copy_notebook = function(){
         var path = this.notebook_path;
-        var base_project_url = this.base_project_url;
+        var base_url = this.base_url;
         var settings = {
             processData : false,
             cache : false,
@@ -1783,7 +1783,7 @@ var IPython = (function (IPython) {
             async : false,
             success : function (data, status, xhr) {
                 window.open(utils.url_join_encode(
-                    base_project_url,
+                    base_url,
                     'notebooks',
                     data.path,
                     data.name
@@ -1791,7 +1791,7 @@ var IPython = (function (IPython) {
             }
         };
         var url = utils.url_join_encode(
-            base_project_url,
+            base_url,
             'api/notebooks',
             path
         );
@@ -1816,7 +1816,7 @@ var IPython = (function (IPython) {
         };
         $([IPython.events]).trigger('rename_notebook.Notebook', data);
         var url = utils.url_join_encode(
-            this.base_project_url,
+            this.base_url,
             'api/notebooks',
             this.notebook_path,
             this.notebook_name
@@ -1833,7 +1833,7 @@ var IPython = (function (IPython) {
             dataType: "json",
         };
         var url = utils.url_join_encode(
-            this.base_project_url,
+            this.base_url,
             'api/notebooks',
             this.notebook_path,
             this.notebook_name
@@ -1901,7 +1901,7 @@ var IPython = (function (IPython) {
         };
         $([IPython.events]).trigger('notebook_loading.Notebook');
         var url = utils.url_join_encode(
-            this.base_project_url,
+            this.base_url,
             'api/notebooks',
             this.notebook_path,
             this.notebook_name
@@ -2052,7 +2052,7 @@ var IPython = (function (IPython) {
      */
     Notebook.prototype.list_checkpoints = function () {
         var url = utils.url_join_encode(
-            this.base_project_url,
+            this.base_url,
             'api/notebooks',
             this.notebook_path,
             this.notebook_name,
@@ -2103,7 +2103,7 @@ var IPython = (function (IPython) {
      */
     Notebook.prototype.create_checkpoint = function () {
         var url = utils.url_join_encode(
-            this.base_project_url,
+            this.base_url,
             'api/notebooks',
             this.notebook_path,
             this.notebook_name,
@@ -2190,7 +2190,7 @@ var IPython = (function (IPython) {
     Notebook.prototype.restore_checkpoint = function (checkpoint) {
         $([IPython.events]).trigger('notebook_restoring.Notebook', checkpoint);
         var url = utils.url_join_encode(
-            this.base_project_url,
+            this.base_url,
             'api/notebooks',
             this.notebook_path,
             this.notebook_name,
@@ -2238,7 +2238,7 @@ var IPython = (function (IPython) {
     Notebook.prototype.delete_checkpoint = function (checkpoint) {
         $([IPython.events]).trigger('notebook_restoring.Notebook', checkpoint);
         var url = utils.url_join_encode(
-            this.base_project_url,
+            this.base_url,
             'api/notebooks',
             this.notebook_path,
             this.notebook_name,
