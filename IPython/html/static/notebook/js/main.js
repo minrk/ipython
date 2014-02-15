@@ -15,7 +15,7 @@
 // which search marked into global.
 require(['components/marked/lib/marked',
          'notebook/js/widgets/init',
-         'components/bootstrap-tour/build/js/bootstrap-tour'],
+         'components/bootstrap-tour/build/js/bootstrap-tour.min'],
 
 function (marked) {
     "use strict";
