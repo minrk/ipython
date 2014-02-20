@@ -510,14 +510,14 @@ var IPython = (function (IPython) {
     KeyboardManager.prototype.handle_keydown = function (event) {
         var notebook = IPython.notebook;
 
-        if (event.which === keycodes['esc']) {
+        if (event.which === keycodes.esc) {
             // Intercept escape at highest level to avoid closing
             // websocket connection with firefox
             event.preventDefault();
         }
         
         if (!this.enabled) {
-            if (event.which === keycodes['esc']) {
+            if (event.which === keycodes.esc) {
                 // ESC
                 notebook.command_mode();
                 return false;
