@@ -1,9 +1,9 @@
 {
     "description": "custom json structure with references to generate notebook schema",
+    "$schema": "http://json-schema.org/draft-03/schema",
     "notebook":{
       "type": "object",
       "description": "notebook v3.0 root schema",
-      "$schema": "http://json-schema.org/draft-03/schema",
       "id": "#notebook",
       "required": true,
       "additionalProperties": false,
@@ -12,7 +12,7 @@
           "type": "object",
           "id": "metadata",
           "required": true,
-          "description": "the metadata atribute can contain any additionnal information",
+          "description": "the metadata attribute can contain any additional information",
           "additionalProperties": true,
           "properties":{
             "name": {
@@ -78,7 +78,7 @@
 
     "text_cell": {
       "type": "object",
-      "description": "scheme for text cel and childrenm (level only optionnal argument for HEader cell)",
+      "description": "scheme for text cel and children (level only optional argument for Header cell)",
       "$schema": "http://json-schema.org/draft-03/schema",
       "id": "#cell",
       "required": true,
@@ -159,7 +159,7 @@
             }
         },
         "outputs": {
-            "description": "output for code cell, to be definied",
+            "description": "output for code cell, to be defined",
             "required": true,
             "type": "array"
         },

@@ -2,15 +2,16 @@ from __future__ import print_function
 import json
 import os
 
-from jsonschema import Draft4Validator, SchemaError
+from jsonschema import Draft4Validator, Draft3Validator, SchemaError
 import jsonpointer as jsonpointer
 from IPython.utils.py3compat import iteritems
 
 
 from .current import nbformat, nbformat_schema
+
 schema_path = os.path.join(
     os.path.dirname(__file__), "v%d" % nbformat, nbformat_schema)
-
+_schema_json = None
 
 def isvalid(nbjson):
     """Checks whether the given notebook JSON conforms to the current
@@ -31,17 +32,28 @@ def validate(nbjson):
     notebook format schema, and returns the list of errors.
 
     """
-
-    # load the schema file
-    with open(schema_path, 'r') as fh:
-        schema_json = json.load(fh)
+    
+    global _schema_json
+    if _schema_json is None:
+        # load the schema file
+        with open(schema_path, 'r') as fh:
+            _schema_json = json.load(fh)
 
     # resolve internal references
-    v3schema = resolve_ref(schema_json)
-    v3schema = jsonpointer.resolve_pointer(v3schema, '/notebook')
+    schema_url = _schema_json['$schema']
+    if schema_url == "http://json-schema.org/draft-04/schema":
+        Validator = Draft4Validator
+    elif schema_url == "http://json-schema.org/draft-03/schema":
+        Validator = Draft3Validator
+    else:
+        raise ValueError("Unsupported schema version: %s" % schema_url)
+
+    schema = resolve_ref(_schema_json)
+    schema = jsonpointer.resolve_pointer(schema, '/notebook')
+    # if schema_json
 
     # count how many errors there are
-    v = Draft3Validator(v3schema)
+    v = Validator(schema)
     errors = list(v.iter_errors(nbjson))
     return errors
 
