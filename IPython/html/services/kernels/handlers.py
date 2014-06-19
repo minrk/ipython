@@ -5,6 +5,8 @@
 
 import json
 import logging
+import uuid
+
 from tornado import web
 
 from IPython.utils.jsonutil import date_default
@@ -83,7 +85,9 @@ class ZMQChannelHandler(AuthenticatedZMQStreamHandler):
         # Create a kernel_info channel to query the kernel protocol version.
         # This channel will be closed after the kernel_info reply is received.
         self.kernel_info_channel = None
-        self.kernel_info_channel = km.connect_shell(self.kernel_id)
+        # set an ascii identity for rzmq:
+        ident = unicode(uuid.uuid4().hex).encode('ascii')
+        self.kernel_info_channel = km.connect_shell(self.kernel_id, identity=ident)
         self.kernel_info_channel.on_recv(self._handle_kernel_info_reply)
         self._request_kernel_info()
     
