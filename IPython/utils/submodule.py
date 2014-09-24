@@ -80,6 +80,7 @@ def check_submodule_status(root=None):
     )
     status, _ = proc.communicate()
     status = status.decode("ascii", "replace")
+    print("submodule status: %s" % status)
 
     for line in status.splitlines():
         if line.startswith('-'):

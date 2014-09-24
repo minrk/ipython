@@ -588,6 +588,8 @@ def require_submodules(command):
     """decorator for instructing a command to check for submodules before running"""
     class DecoratedCommand(command):
         def run(self):
+            print('repo root', repo_root)
+            print("check submodule", check_submodule_status(repo_root))
             if not check_submodule_status(repo_root) == 'clean':
                 print("submodules missing! Run `setup.py submodule` and try again")
                 sys.exit(1)
