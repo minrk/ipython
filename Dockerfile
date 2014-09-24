@@ -14,6 +14,11 @@ WORKDIR /srv/ipython/
 RUN pip2 install fabric
 RUN pip3 install jsonschema jsonpointer
 RUN ls -l /srv/ipython/IPython/html/static
+RUN git status
+RUN git submodule status
+WORKDIR /srv/ipython/IPython/html/static/components
+RUN git status
+WORKDIR /srv/ipython/
 
 # .[all] only works with -e
 # Can't use -e because ipython2 and ipython3 will clobber each other
