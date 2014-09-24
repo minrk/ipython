@@ -12,9 +12,11 @@ WORKDIR /srv/ipython/
 
 # Installing certain dependencies directly
 RUN pip2 install fabric
-RUN pip3 install jsonschema jsonpointer fabric
+RUN pip3 install jsonschema jsonpointer
+RUN ls -l /srv/ipython/IPython/html/static
 
 # .[all] only works with -e
 # Can't use -e because ipython2 and ipython3 will clobber each other
+RUN python setup.py submodule
 RUN pip2 install .
 RUN pip3 install .
