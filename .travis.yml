@@ -5,25 +5,39 @@ python:
     - 2.7
     - 3.3
 env:
+  global:
+    - SLIMERJSLAUNCHER=$(which firefox) DISPLAY=:99.0
+  matrix:
     - GROUP=js
     - GROUP=
+addons:
+    firefox: "32.0"
 before_install:
     # workaround for https://github.com/travis-ci/travis-cookbooks/issues/155
     - sudo rm -rf /dev/shm && sudo ln -s /run/shm /dev/shm
-    # Pierre Carrier's PPA for PhantomJS and CasperJS
-    - sudo add-apt-repository -y ppa:pcarrier/ppa
-    # Needed to get recent version of pandoc in ubntu 12.04
-    - sudo add-apt-repository -y ppa:marutter/c2d4u
-    - sudo apt-get update
-    - sudo apt-get install pandoc casperjs libzmq3-dev
-    # pin tornado < 4 for js tests while phantom is on super old webkit
+    # slimerjs
+    - '[[ $GROUP == js* ]] && sh -e /etc/init.d/xvfb start'
+    - '[[ $GROUP == js* ]] && wget http://download.slimerjs.org/v0.9/0.9.3/slimerjs-0.9.3.zip'
+    - '[[ $GROUP == js* ]] && unzip slimerjs-0.9.3.zip'
+    - '[[ $GROUP == js* ]] && mv slimerjs-0.9.3 ./slimerjs'
+    - '[[ $GROUP == js* ]] && export "PATH=$PWD/slimerjs:$PATH"'
+    # casperjs
+    - '[[ $GROUP == js* ]] && wget https://github.com/n1k0/casperjs/archive/1.1-beta3.tar.gz -O /tmp/casper.tar.gz'
+    - '[[ $GROUP == js* ]] && tar -xvf /tmp/casper.tar.gz'
+    - '[[ $GROUP == js* ]] && export PATH="$PWD/casperjs-1.1-beta3/bin:$PATH"'
+    # pandoc
+    - wget https://9c3695669ccd6962f554-d726a73613a1989d29b147f20996e7c1.ssl.cf2.rackcdn.com/pandoc-1.12.3-linux-debian-x86_64.zip -O /tmp/pandoc.zip
+    - unzip /tmp/pandoc.zip
+    - 'export PATH="$PWD/pandoc:$PATH"'
+    # get python wheels
     - git clone --quiet --depth 1 https://github.com/minrk/travis-wheels travis-wheels
-    - if [[ $GROUP == 'js' ]]; then pip install -f travis-wheels/wheelhouse 'tornado<4'; fi
-    - if [[ $GROUP == 'js' ]]; then python -m IPython.external.mathjax; fi
+    # use local mathjax
+    - '[[ $GROUP == js* ]] && python -m IPython.external.mathjax'
+    - '[[ $GROUP == js* ]] && export ARGS="--slimerjs"'
 install:
-    - time pip install -f travis-wheels/wheelhouse file://$PWD#egg=ipython[all]
+    - 'time pip install -f travis-wheels/wheelhouse file://$PWD#egg=ipython[all]'
 script:
-    - cd /tmp && iptest $GROUP
+    - cd /tmp && iptest $GROUP $ARGS
 
 matrix:
     exclude:
