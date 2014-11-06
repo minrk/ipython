@@ -107,7 +107,7 @@ casper.notebook_test(function () {
         this.wait_for_output(index);
         this.then(function () {
             var out = this.get_output_cell(index);
-            this.test.assertEquals(out['text/plain'], '1', "Python received buffers");
+            this.test.assertEquals(out.data['text/plain'], '1', "Python received buffers");
         });
     });
 });
