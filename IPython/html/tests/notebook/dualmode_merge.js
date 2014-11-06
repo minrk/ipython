@@ -71,6 +71,9 @@ casper.notebook_test(function () {
         this.select_cell(0);
         this.trigger_keydown('esc');
         this.trigger_keydown('shift-m');
+        this.waitFor(function () {
+            return this.get_cells_length() == 3;
+        });
         this.test.assertEquals(this.get_cells_length(), 3, 'Merge cell 0 down: There are still 3 cells');
         this.test.assertEquals(this.get_cell_text(0), a, 'Merge cell 0 down: Cell 0 is unchanged');
         this.test.assertEquals(this.get_cell_text(1), b, 'Merge cell 0 down: Cell 1 is unchanged');
@@ -86,6 +89,9 @@ casper.notebook_test(function () {
         IPython.notebook.merge_cell_above();
     });
     this.then(function () {
+        this.waitFor(function () {
+            return this.get_cells_length() == 3;
+        });
         this.test.assertEquals(this.get_cells_length(), 3, 'Merge cell 1 up: There are still 3 cells');
         this.test.assertEquals(this.get_cell_text(0), a, 'Merge cell 1 up: Cell 0 is unchanged');
         this.test.assertEquals(this.get_cell_text(1), b, 'Merge cell 1 up: Cell 1 is unchanged');
@@ -99,6 +105,9 @@ casper.notebook_test(function () {
         this.trigger_keydown('enter');
         this.set_cell_editor_cursor(1, 0, 2);
         this.trigger_keydown('ctrl-shift-subtract'); // Split
+        this.waitFor(function () {
+            return this.get_cells_length() == 3;
+        });
         this.test.assertEquals(this.get_cells_length(), 3, 'Split cell 1: There are still 3 cells');
         this.test.assertEquals(this.get_cell_text(0), a, 'Split cell 1: Cell 0 is unchanged');
         this.test.assertEquals(this.get_cell_text(1), b, 'Split cell 1: Cell 1 is unchanged');
@@ -111,6 +120,9 @@ casper.notebook_test(function () {
         this.select_cell(1);
         this.trigger_keydown('esc');
         this.trigger_keydown('shift-m');
+        this.waitFor(function () {
+            return this.get_cells_length() == 3;
+        });
         this.test.assertEquals(this.get_cells_length(), 3, 'Merge cell 1 down: There are still 3 cells');
         this.test.assertEquals(this.get_cell_text(0), a, 'Merge cell 1 down: Cell 0 is unchanged');
         this.test.assertEquals(this.get_cell_text(1), b, 'Merge cell 1 down: Cell 1 is unchanged');
@@ -126,6 +138,9 @@ casper.notebook_test(function () {
         IPython.notebook.merge_cell_above();
     });
     this.then(function () {
+        this.waitFor(function () {
+            return this.get_cells_length() == 3;
+        });
         this.test.assertEquals(this.get_cells_length(), 3, 'Merge cell 2 up: There are still 3 cells');
         this.test.assertEquals(this.get_cell_text(0), a, 'Merge cell 2 up: Cell 0 is unchanged');
         this.test.assertEquals(this.get_cell_text(1), b, 'Merge cell 2 up: Cell 1 is unchanged');

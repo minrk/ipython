@@ -8,8 +8,10 @@ casper.notebook_test(function () {
         var cell = IPython.notebook.get_selected_cell();
         cell.set_text('# Foo');
         cell.render();
-        return cell.get_rendered();
+        return $(cell.get_rendered());
     });
+    console.log('output', typeof output, output);
+    console.log(output.length);
     this.test.assertEquals(output.trim(), '<h1 id=\"Foo\">Foo<a class=\"anchor-link\" href=\"#Foo\">¶</a></h1>', 'Markdown JS API works.');
     
     // Test menubar entries.
@@ -56,7 +58,7 @@ casper.notebook_test(function () {
     for (var idx=0; idx < levels.length; idx++) {
         var level = levels[idx];
         level_text = set_level(level);
-        hashes = new Array(level + 1).join('#');
+        var hashes = new Array(level + 1).join('#');
         this.test.assertEquals(level_text, hashes + ' ' + text, 'markdown set_heading_level ' + level);
     }
 });

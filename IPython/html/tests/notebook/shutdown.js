@@ -20,10 +20,13 @@ casper.notebook_test(function () {
         this.evaluate(function(url){
             window.open(url);
         }, {url : this.getCurrentUrl()});
-    })
+    });
 
     this.waitForPopup('');
     this.withPopup('', function () {
+        this.then(function () {
+            this.waitFor(this.kernel_ready);
+        });
         this.thenEvaluate(function () {
             $('#kill_and_exit').click();
         });
@@ -37,7 +40,7 @@ casper.notebook_test(function () {
         this.then(function () {
             var outputs = this.evaluate(function() {
                 return IPython.notebook.get_cell(0).output_area.outputs;
-            })
+            });
             this.test.assertEquals(outputs.length, 0, "after shutdown: no execution results");
             this.test.assertNot(this.kernel_running(),
                 'after shutdown: IPython.notebook.kernel.running is false ');
