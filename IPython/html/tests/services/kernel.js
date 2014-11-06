@@ -144,7 +144,9 @@ casper.notebook_test(function () {
     this.thenEvaluate(function () {
         IPython.notebook.kernel.kill();
     });
-    this.waitFor(this.kernel_disconnected);
+    this.then(function () {
+        this.waitFor(this.kernel_disconnected);
+    });
     this.then(function () {
         url = this.evaluate(function () {
             return IPython.notebook.kernel.start({foo: "bar"});
