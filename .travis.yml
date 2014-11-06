@@ -9,10 +9,10 @@ env:
     - SLIMERJSLAUNCHER=$(which firefox) DISPLAY=:99.0
   matrix:
     - GROUP=js/services
-    - GROUP=js/notebook
-    - GROUP=js/base
-    - GROUP=js/tree
-    - GROUP=js/widgets
+    # - GROUP=js/notebook
+    # - GROUP=js/base
+    # - GROUP=js/tree
+    # - GROUP=js/widgets
     # - GROUP=
 addons:
     firefox: "32.0"
