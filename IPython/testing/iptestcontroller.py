@@ -83,7 +83,7 @@ class TestController(object):
 
     def launch(self, buffer_output=False, capture_output=False):
         # print('*** ENV:', self.env)  # dbg
-        # print('*** CMD:', self.cmd)  # dbg
+        print('*** CMD:', self.cmd)  # dbg
         env = os.environ.copy()
         env.update(self.env)
         if buffer_output:
@@ -235,6 +235,7 @@ class JSController(TestController):
         """Create new test runner."""
         TestController.__init__(self)
         self.engine = engine
+        print("js engine: %s" % engine)
         self.section = section
         self.xunit = xunit
         self.url = url
