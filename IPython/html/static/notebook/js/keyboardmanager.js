@@ -508,8 +508,11 @@ define([
     KeyboardManager.prototype.bind_events = function () {
         var that = this;
         $(document).keydown(function (event) {
+            console.log("keydown", event.type, event.which, event.shiftKey);
+            console.log(JSON.stringify(event));
 
             if(event._ipkmIgnore==true||(event.originalEvent||{})._ipkmIgnore==true){
+                console.log("ignore");
                 return false;
             }
             return that.handle_keydown(event);

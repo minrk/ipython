@@ -391,7 +391,7 @@ casper.trigger_keydown = function() {
             var element = $(document);
             var event = IPython.keyboard.shortcut_to_event(k, 'keydown');
             element.trigger(event);
-        }, {k: arguments[i]});    
+        }, {k: arguments[i]});
     }
 };
 
