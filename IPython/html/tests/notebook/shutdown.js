@@ -24,9 +24,7 @@ casper.notebook_test(function () {
 
     this.waitForPopup('');
     this.withPopup('', function () {
-        this.then(function () {
-            this.waitFor(this.kernel_ready);
-        });
+        this.wait_for_kernel_ready();
         this.thenEvaluate(function () {
             $('#kill_and_exit').click();
         });

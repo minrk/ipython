@@ -360,11 +360,14 @@ casper.click_cell_editor = function(index) {
     // Instead of trying to emulate a click, here we run code similar to
     // the code used in Code Mirror that handles the mousedown event on a
     // region of codemirror that the user can focus.
-    this.evaluate(function (i) {
+    var rc = this.evaluate(function (i) {
+        // IPython.notebook.get_cell(i).element.click();
         var cm = IPython.notebook.get_cell(i).code_mirror;
         if (cm.options.readOnly != "nocursor" && (document.activeElement != cm.display.input))
             cm.display.input.focus();
+        return 1;
     }, {i: index});
+    this.test.assertEqual(rc, 1);
 };
 
 casper.set_cell_editor_cursor = function(index, line_index, char_index) {
@@ -456,11 +459,22 @@ casper.is_only_cell_on = function(i, on_class, off_class) {
     var cells_length = this.get_cells_length();
     for (var j = 0; j < cells_length; j++) {
         if (j === i) {
-            if (this.cell_has_class(j, off_class) || !this.cell_has_class(j, on_class)) {
+            if (this.cell_has_class(j, off_class)) {
+                console.log("cell " + j + " should not have class " + off_class);
+                return false;
+            } else if (!this.cell_has_class(j, on_class)) {
+                console.log("cell " + j + " should have class " + on_class);
                 return false;
             }
         } else {
             if (!this.cell_has_class(j, off_class) || this.cell_has_class(j, on_class)) {
+                return false;
+            }
+            if (this.cell_has_class(j, on_class)) {
+                console.log("cell " + j + " should not have class " + off_class);
+                return false;
+            } else if (!this.cell_has_class(j, off_class)) {
+                console.log("cell " + j + " should have class " + on_class);
                 return false;
             }
         }
