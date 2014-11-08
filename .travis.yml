@@ -20,7 +20,7 @@ before_install:
     # workaround for https://github.com/travis-ci/travis-cookbooks/issues/155
     - sudo rm -rf /dev/shm && sudo ln -s /run/shm /dev/shm
     # slimerjs
-    - '[[ $GROUP == js* ]] && https://9c3695669ccd6962f554-d726a73613a1989d29b147f20996e7c1.ssl.cf2.rackcdn.com/phantomjs.zip'
+    - '[[ $GROUP == js* ]] && wget https://9c3695669ccd6962f554-d726a73613a1989d29b147f20996e7c1.ssl.cf2.rackcdn.com/phantomjs.zip'
     - '[[ $GROUP == js* ]] && unzip phantomjs.zip'
     - '[[ $GROUP == js* ]] && export "PATH=$PWD/phantomjs:$PATH"'
     # casperjs
