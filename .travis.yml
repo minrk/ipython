@@ -24,9 +24,9 @@ before_install:
     - '[[ $GROUP == js* ]] && unzip phantomjs.zip'
     - '[[ $GROUP == js* ]] && export "PATH=$PWD/phantomjs:$PATH"'
     # casperjs
-    - '[[ $GROUP == js* ]] && wget https://github.com/n1k0/casperjs/archive/1.1-beta3.tar.gz -O /tmp/casper.tar.gz'
+    - '[[ $GROUP == js* ]] && wget https://github.com/n1k0/casperjs/archive/master.tar.gz -O /tmp/casper.tar.gz'
     - '[[ $GROUP == js* ]] && tar -xvf /tmp/casper.tar.gz'
-    - '[[ $GROUP == js* ]] && export PATH="$PWD/casperjs-1.1-beta3/bin:$PATH"'
+    - '[[ $GROUP == js* ]] && export PATH="$PWD/casperjs-master/bin:$PATH"'
     # pandoc
     - wget https://9c3695669ccd6962f554-d726a73613a1989d29b147f20996e7c1.ssl.cf2.rackcdn.com/pandoc-1.12.3-linux-debian-x86_64.zip -O /tmp/pandoc.zip
     - unzip /tmp/pandoc.zip
