@@ -19,6 +19,7 @@ itself from the command line. There are two ways of running this script:
 
 from __future__ import print_function
 
+from distutils.version import LooseVersion as V
 import glob
 from io import BytesIO
 import os
@@ -140,7 +141,7 @@ have['sphinx'] = test_for('sphinx')
 have['jsonschema'] = test_for('jsonschema')
 have['terminado'] = test_for('terminado')
 have['casperjs'] = is_cmd_found('casperjs')
-have['phantomjs'] = is_cmd_found('phantomjs')
+have['phantomjs'] = is_cmd_found('phantomjs') and V(check_output(['phantomjs', '--version'])) >= V('2.0')
 have['slimerjs'] = is_cmd_found('slimerjs')
 
 min_zmq = (2,1,11)
