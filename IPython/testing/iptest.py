@@ -25,6 +25,7 @@ from io import BytesIO
 import os
 import os.path as path
 import sys
+from subprocess import check_output
 from threading import Thread, Lock, Event
 import warnings
 
@@ -141,8 +142,15 @@ have['sphinx'] = test_for('sphinx')
 have['jsonschema'] = test_for('jsonschema')
 have['terminado'] = test_for('terminado')
 have['casperjs'] = is_cmd_found('casperjs')
-have['phantomjs'] = is_cmd_found('phantomjs') and V(check_output(['phantomjs', '--version'])) >= V('2.0')
 have['slimerjs'] = is_cmd_found('slimerjs')
+
+def check_for_phantomjs_2():
+    if not is_cmd_found('phantomjs'):
+        return False
+    phantom_version = check_output(['phantomjs', '--version']).decode('utf8', 'replace')
+    return V(phantom_version) >= V('2.0')
+
+have['phantomjs'] = check_for_phantomjs_2()
 
 min_zmq = (2,1,11)
 
