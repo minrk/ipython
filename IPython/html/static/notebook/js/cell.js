@@ -535,6 +535,7 @@ define([
         var current_mode = this.code_mirror.getOption('mode', mode);
         var first_line = this.code_mirror.getLine(0);
         // loop on every pairs
+        console.log(modes);
         for(mode in modes) {
             var regs = modes[mode].reg;
             // only one key every time but regexp can't be keys...

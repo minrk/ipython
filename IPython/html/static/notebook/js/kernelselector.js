@@ -72,17 +72,22 @@ define([
     KernelSelector.prototype.bind_events = function() {
         var that = this;
         this.events.on('spec_changed.Kernel', function(event, data) {
+            console.log("spec changed", data);
             that.current_selection = data.name;
+            console.log(that.element.find("#current_kernel_spec"));
+            window.element = that.element;
             that.element.find("#current_kernel_spec").find('.kernel_name').text(data.display_name);
             that.element.find("#current_kernel_logo").attr("src", "/kernelspecs/"+data.name+"/logo-32.png");
         });
         
-        this.events.on('started.Session', function(events, session) {
-            if (session.kernel_name !== that.current_selection) {
+        this.events.on('kernel_created.Session', function(event, data) {
+            console.log(arguments);
+            console.log('session started', data.kernel.name, that.current_selection);
+            if (data.kernel.name !== that.current_selection) {
                 // If we created a 'python' session, we only know if it's Python
                 // 3 or 2 on the server's reply, so we fire the event again to
                 // set things up.
-                var ks = that.kernelspecs[session.kernel_name];
+                var ks = that.kernelspecs[data.kernel.name];
                 that.events.trigger('spec_changed.Kernel', ks);
             }
         });

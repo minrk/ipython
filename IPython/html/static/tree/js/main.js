@@ -14,6 +14,7 @@ require([
     'tree/js/sessionlist',
     'tree/js/kernellist',
     'tree/js/terminallist',
+    'tree/js/kernelselector',
     'auth/js/loginwidget',
     // only loaded, not used:
     'jqueryui',
@@ -27,11 +28,12 @@ require([
     page,
     utils,
     contents_service,
-    notebooklist, 
-    clusterlist, 
-    sesssionlist, 
+    notebooklist,
+    clusterlist,
+    sesssionlist,
     kernellist,
     terminallist,
+    kernelselector,
     loginwidget){
     "use strict";
 
@@ -62,25 +64,31 @@ require([
     }
 
     var login_widget = new loginwidget.LoginWidget('#login_widget', common_options);
-
-    $('#new_notebook').click(function (e) {
-        var w = window.open();
-        contents.new_untitled(common_options.notebook_path, {type: "notebook"}).then(
-                function (data) {
-                    w.location = utils.url_join_encode(
-                            common_options.base_url, 'notebooks', data.path
-                        );
-                },
-                function(error) {
-                    w.close();
-                    dialog.modal({
-                        title : 'Creating Notebook Failed',
-                        body : "The error was: " + error.message,
-                        buttons : {'OK' : {'class' : 'btn-primary'}}
-                    });
-                }
-            );
-    });
+    
+    var kernel_selector = new kernelselector.KernelSelector("#new-notebook-dropdown", $.extend({
+        contents: contents,
+        session_list: session_list},
+        common_options)
+    );
+    //
+    // $('#new_notebook').click(function (e) {
+    //     var w = window.open();
+    //     contents.new_untitled(common_options.notebook_path, {type: "notebook"}).then(
+    //             function (data) {
+    //                 w.location = utils.url_join_encode(
+    //                         common_options.base_url, 'notebooks', data.path
+    //                     );
+    //             },
+    //             function(error) {
+    //                 w.close();
+    //                 dialog.modal({
+    //                     title : 'Creating Notebook Failed',
+    //                     body : "The error was: " + error.message,
+    //                     buttons : {'OK' : {'class' : 'btn-primary'}}
+    //                 });
+    //             }
+    //         );
+    // });
 
     var interval_id=0;
     // auto refresh every xx secondes, no need to be fast,

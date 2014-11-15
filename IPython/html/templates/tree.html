@@ -43,10 +43,19 @@ data-terminals-available="{{terminals_available}}"
                 </form>
             </div>
             <div class="col-sm-4 no-padding tree-buttons">
-                <span id="notebook_buttons" class="pull-right">
-                    <button id="new_notebook" title="Create new notebook" class="btn btn-default btn-xs">New Notebook</button>
-                    <button id="refresh_notebook_list" title="Refresh notebook list" class="btn btn-default btn-xs"><i class="fa fa-refresh"></i></button>
+              <span id="notebook_buttons" class="pull-right">
+                <span id="new-notebook-dropdown" class="dropdown">
+                  <button class="dropdown-toggle" data-toggle="dropdown" class="btn btn-default btn-xs">
+                    New Notebook
+                    <span class="caret"></span>
+                  </button>
+                  <ul id="new-notebook-menu" class="dropdown-menu">
+                  </ul>
                 </span>
+
+                  
+                <button id="refresh_notebook_list" title="Refresh notebook list" class="btn btn-default btn-xs"><i class="fa fa-refresh"></i></button>
+              </span>
             </div>
         </div>
 
