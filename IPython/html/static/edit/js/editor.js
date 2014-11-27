@@ -31,6 +31,7 @@ function($,
         this.file_path = options.file_path;
         this.config = options.config;
         this.codemirror = null;
+        this.generation = -1;
         
         // It appears we have to set commands on the CodeMirror class, not the
         // instance. I'd like to be wrong, but since there should only be one CM
@@ -77,6 +78,7 @@ function($,
                     });
                 }
                 that.save_enabled = true;
+                that.generation = cm.changeGeneration();
             },
             function(error) {
                 cm.setValue("Error! " + error.message +
@@ -99,6 +101,8 @@ function($,
             content: this.codemirror.getValue(),
         };
         var that = this;
+        // record change generation for isClean
+        this.generation = this.codemirror.changeGeneration();
         this.contents.save(this.file_path, model).then(function() {
             that.events.trigger("save_succeeded.TextEditor");
         });

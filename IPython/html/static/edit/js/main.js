@@ -62,4 +62,14 @@ require([
         }
     });
     page.show();
+
+    window.onbeforeunload = function () {
+        if (!editor.codemirror) {
+            return;
+        }
+        if (!editor.codemirror.isClean(editor.generation)) {
+            return "Unsaved changes will be lost. Close anyway?";
+        }
+    };
+
 });
