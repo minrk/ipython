@@ -62,7 +62,7 @@ require([
         }
     });
     page.show();
-
+    
     window.onbeforeunload = function () {
         if (!editor.codemirror) {
             return;
@@ -71,5 +71,10 @@ require([
             return "Unsaved changes will be lost. Close anyway?";
         }
     };
-
+    
+    function onresize () {
+        $("#site").height($("body").height() - $("#header").height() - 8);
+    }
+    window.onresize = onresize;
+    onresize();
 });

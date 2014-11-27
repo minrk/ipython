@@ -8148,6 +8148,31 @@ input.engine_num_input {
 }
 /*!
 *
+* IPython text editor webapp
+*
+*/
+.selected-keymap i.fa {
+  padding: 0px 5px;
+}
+.selected-keymap i.fa:before {
+  content: "\f00c";
+}
+#texteditor-container {
+  overflow-y: auto;
+  max-height: 100%;
+  padding-top: 32px;
+  border-bottom: 1px solid #ccc;
+}
+.navbar-fixed-top.navbar-absolute-top {
+  position: absolute;
+}
+#filename {
+  font-size: 16pt;
+  display: table;
+  padding: 0px 5px;
+}
+/*!
+*
 * IPython notebook
 *
 */

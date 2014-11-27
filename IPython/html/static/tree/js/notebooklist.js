@@ -225,7 +225,7 @@ define([
     NotebookList.uri_prefixes = {
         directory: 'tree',
         notebook: 'notebooks',
-        file: 'files',
+        file: 'edit',
     };
 
 

@@ -5,8 +5,9 @@ define([
     'base/js/namespace',
     'jquery',
     'base/js/utils',
+    'base/js/dialog',
     'bootstrap',
-], function(IPython, $, utils, bootstrap) {
+], function(IPython, $, utils, dialog, bootstrap) {
     "use strict";
     
     var MenuBar = function (selector, options) {
@@ -36,9 +37,30 @@ define([
     };
 
     MenuBar.prototype.bind_events = function () {
-        //  File
         var that = this;
         var editor = that.editor;
+        
+        //  File
+        this.element.find('#new-file').click(function () {
+            var w = window.open();
+            // Create a new file in the current directory
+            var parent = utils.url_path_split(editor.file_path)[0];
+            editor.contents.new_untitled(parent, {type: "file"}).then(
+                function (data) {
+                    w.location = utils.url_join_encode(
+                        that.base_url, 'edit', data.path
+                    );
+                },
+                function(error) {
+                    w.close();
+                    dialog.modal({
+                        title : 'Creating New File Failed',
+                        body : "The error was: " + error.message,
+                        buttons : {'OK' : {'class' : 'btn-primary'}}
+                    });
+                }
+            );
+        });
         this.element.find('#save-file').click(function () {
             editor.save();
         });
@@ -49,6 +71,30 @@ define([
         });
         this.element.find('#menu-replace').click(function () {
             editor.codemirror.execCommand("replace");
+        });
+        this.element.find('#menu-keymap-default').click(function () {
+            editor.update_codemirror_options({
+                vimMode: false,
+                keyMap: null
+            });
+        });
+        this.element.find('#menu-keymap-sublime').click(function () {
+            editor.update_codemirror_options({
+                vimMode: false,
+                keyMap: 'sublime'
+            });
+        });
+        this.element.find('#menu-keymap-emacs').click(function () {
+            editor.update_codemirror_options({
+                vimMode: false,
+                keyMap: 'emacs'
+            });
+        });
+        this.element.find('#menu-keymap-vim').click(function () {
+            editor.update_codemirror_options({
+                vimMode: true,
+                keyMap: 'vim'
+            });
         });
         
         // View
@@ -63,6 +109,9 @@ define([
             var text = lineNumbers ? "Hide" : "Show";
             text = text + " Line Numbers";
             that.element.find('#menu-line-numbers').find("a").text(text);
+            var keyMap = editor.codemirror.getOption('keyMap') || "default";
+            that.element.find(".selected-keymap").removeClass("selected-keymap");
+            that.element.find("#menu-keymap-" + keyMap).addClass("selected-keymap");
         });
     };
 
