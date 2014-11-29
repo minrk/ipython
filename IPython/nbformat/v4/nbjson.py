@@ -46,10 +46,10 @@ class JSONWriter(NotebookWriter):
     def writes(self, nb, **kwargs):
         """Serialize a NotebookNode object as a JSON string"""
         kwargs['cls'] = BytesEncoder
-        kwargs['indent'] = 1
-        kwargs['sort_keys'] = True
-        kwargs['separators'] = (',',': ')
+        kwargs.setdefault('indent', 1)
         kwargs.setdefault('ensure_ascii', False)
+        kwargs.setdefault('sort_keys', True)
+        kwargs.setdefault('separators', (',',': '))
         # don't modify in-memory dict
         nb = copy.deepcopy(nb)
         if kwargs.pop('split_lines', True):
