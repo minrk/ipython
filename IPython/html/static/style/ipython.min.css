@@ -358,7 +358,7 @@ div.cell {
   border-width: thin;
   border-style: solid;
   width: 100%;
-  padding: 5px 5px 5px 0px;
+  padding: 5px;
   /* This acts as a spacer between cells, that is outside the border */
   margin: 0px;
   outline: none;
@@ -379,6 +379,16 @@ div.cell.edit_mode {
 @media print {
   div.cell.edit_mode {
     border-color: transparent;
+  }
+}
+@media (min-width: 992px) {
+  div.cell {
+    padding-right: 30px;
+  }
+}
+@media (min-width: 1200px) {
+  div.cell {
+    padding-right: 15ex;
   }
 }
 div.prompt {
@@ -1113,7 +1123,6 @@ div.output_unrecognized a:hover {
   margin-top: 1em;
 }
 div.text_cell {
-  padding: 5px 5px 5px 0px;
   /* Old browsers */
   display: -webkit-box;
   -webkit-box-orient: horizontal;

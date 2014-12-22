@@ -23,15 +23,23 @@ div.cell {
     }
 
     width: 100%;
-    padding: 5px 5px 5px 0px;
+    padding: 5px;
     /* This acts as a spacer between cells, that is outside the border */
     margin: 0px;
     outline: none;
+    
+    // increase right padding on medium and large screens
+    @media (min-width: @screen-md-min) {
+        padding-right: 30px;
+    }
+    @media (min-width: @screen-lg-min) {
+       padding-right: @prompt_width;
+    }
 }
 
 div.prompt {
     /* This needs to be wide enough for 3 digit prompt numbers: In[100]: */
-    min-width: 15ex;
+    min-width: @prompt_width;
     /* This padding is tuned to match the padding on the CodeMirror editor. */
     padding: @code_padding;
     margin: 0px;
@@ -41,7 +49,7 @@ div.prompt {
     line-height: @code_line_height;
 }
 
-@media (max-width: 480px) {
+@media (max-width: @screen-xs-min) {
     // prompts are in the main column on small screens,
     // so text should be left-aligned
     div.prompt {
@@ -94,7 +102,7 @@ div.unrecognized_cell {
         }
     }
 }
-@media (max-width: 480px) {
+@media (max-width: @screen-xs-min) {
     // remove prompt indentation on small screens
     div.unrecognized_cell > div.prompt {
         display: none;
