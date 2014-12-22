@@ -79,17 +79,22 @@ define([
         ) {
             default_name = this.config.data.NewNotebookWidget.default_kernel;
         }
-        this.set_default_kernel(default_name);
+        this._set_default_kernel(default_name);
     };
-
+    
     NewNotebookWidget.prototype.set_default_kernel = function (kernel_name) {
         /** select the current default kernel */
-        this.default_kernel = kernel_name;
         this.config.update({
             NewNotebookWidget: {
                 default_kernel: kernel_name
             }
         });
+        this._set_default_kernel(kernel_name);
+    };
+    
+    NewNotebookWidget.prototype._set_default_kernel = function (kernel_name) {
+        /** update kernel selection UI and local state (not config) */
+        this.default_kernel = kernel_name;
         var spec = this.kernelspecs[kernel_name];
         var display_name;
         if (spec) {
