@@ -3,6 +3,9 @@ language: python
 sudo: false
 cache:
     pip: true
+    directories:
+        - dl
+        - .ipython/nbextensions
 python:
     - 3.4
     - 2.7
@@ -21,7 +24,7 @@ before_install:
     # # workaround for https://github.com/travis-ci/travis-cookbooks/issues/155
     # - sudo rm -rf /dev/shm && sudo ln -s /run/shm /dev/shm
     - test -d dl || mkdir dl
-    - 'if [[ $GROUP == js* && ! -e casperjs/bin ]]; then wget https://7de4dfdec62155b49b44-d726a73613a1989d29b147f20996e7c1.ssl.cf2.rackcdn.com/casperjs.zip -o dl/ && unzip dl/casperjs.zip; fi'
+    - 'if [[ $GROUP == js* && ! -e casperjs/bin ]]; then wget https://7de4dfdec62155b49b44-d726a73613a1989d29b147f20996e7c1.ssl.cf2.rackcdn.com/casperjs.zip -o dl/casperjs.zip && unzip dl/casperjs.zip; fi'
     - 'if [[ $GROUP != js* && ! -e pandoc/pandoc ]]; then wget https://7de4dfdec62155b49b44-d726a73613a1989d29b147f20996e7c1.ssl.cf2.rackcdn.com/pandoc-1.12.3-linux-debian-x86_64.zip -o dl/pandoc.zip && unzip dl/pandoc.zip; fi'
     - echo $PATH
     - env
