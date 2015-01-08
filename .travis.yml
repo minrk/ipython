@@ -1,6 +1,10 @@
 # http://travis-ci.org/#!/ipython/ipython
 language: python
 sudo: false
+cache:
+    - pip
+    - apt
+    - .ipython/nbextensions
 python:
     - 3.4
     - 2.7
