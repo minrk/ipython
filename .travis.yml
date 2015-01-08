@@ -1,5 +1,6 @@
 # http://travis-ci.org/#!/ipython/ipython
 language: python
+sudo: false
 python:
     - 3.4
     - 2.7
@@ -11,19 +12,16 @@ env:
     - GROUP=js/widgets
     - GROUP=
 before_install:
-    # workaround for https://github.com/travis-ci/travis-cookbooks/issues/155
-    - sudo rm -rf /dev/shm && sudo ln -s /run/shm /dev/shm
-    # Pierre Carrier's PPA for PhantomJS and CasperJS
-    - sudo add-apt-repository -y ppa:pcarrier/ppa
-    # Needed to get recent version of pandoc in ubntu 12.04
-    - sudo add-apt-repository -y ppa:marutter/c2d4u
-    - sudo apt-get update
-    - sudo apt-get install pandoc casperjs libzmq3-dev
+    # # workaround for https://github.com/travis-ci/travis-cookbooks/issues/155
+    # - sudo rm -rf /dev/shm && sudo ln -s /run/shm /dev/shm
+    - 'if [[ $GROUP == js* ]]; then wget https://7de4dfdec62155b49b44-d726a73613a1989d29b147f20996e7c1.ssl.cf2.rackcdn.com/phantomjs.zip && unzip phantomjs.zip; fi'
+    - 'if [[ $GROUP == js* ]]; then wget https://7de4dfdec62155b49b44-d726a73613a1989d29b147f20996e7c1.ssl.cf2.rackcdn.com/casperjs.zip && unzip casperjs.zip; fi'
+    - 'if [[ $GROUP != js* ]]; then wget https://7de4dfdec62155b49b44-d726a73613a1989d29b147f20996e7c1.ssl.cf2.rackcdn.com/pandoc-1.12.3-linux-debian-x86_64.zip && unzip phantomjs.zip; fi'
+    - ls
     - git clone --quiet --depth 1 https://github.com/minrk/travis-wheels travis-wheels
     - 'if [[ $GROUP == js* ]]; then python -m IPython.external.mathjax; fi'
 install:
-    - pip install coveralls
-    - pip install -f travis-wheels/wheelhouse file://$PWD#egg=ipython[all]
+    - pip install -f travis-wheels/wheelhouse file://$PWD#egg=ipython[all] coveralls
 script:
     - cd /tmp && iptest $GROUP --coverage xml && cd -
 
