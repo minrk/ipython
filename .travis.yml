@@ -24,8 +24,8 @@ env:
 before_install:
     # # workaround for https://github.com/travis-ci/travis-cookbooks/issues/155
     # - sudo rm -rf /dev/shm && sudo ln -s /run/shm /dev/shm
-    - 'if [[ $GROUP == js* && ! -e casperjs/bin ]]; then wget https://7de4dfdec62155b49b44-d726a73613a1989d29b147f20996e7c1.ssl.cf2.rackcdn.com/casperjs.zip && unzip dl/casperjs.zip; fi'
-    - 'if [[ $GROUP != js* && ! -e pandoc/pandoc ]]; then wget https://7de4dfdec62155b49b44-d726a73613a1989d29b147f20996e7c1.ssl.cf2.rackcdn.com/pandoc-1.12.3-linux-debian-x86_64.zip && unzip dl/pandoc-1.12.3-linux-debian-x86_64.zip; fi'
+    - 'if [[ $GROUP == js* && ! -e casperjs/bin ]]; then wget https://7de4dfdec62155b49b44-d726a73613a1989d29b147f20996e7c1.ssl.cf2.rackcdn.com/casperjs.zip && unzip casperjs.zip; fi'
+    - 'if [[ $GROUP != js* && ! -e pandoc/pandoc ]]; then wget https://7de4dfdec62155b49b44-d726a73613a1989d29b147f20996e7c1.ssl.cf2.rackcdn.com/pandoc-1.12.3-linux-debian-x86_64.zip && unzip pandoc-1.12.3-linux-debian-x86_64.zip; fi'
     - env
     - 'if [[ $GROUP == js* ]]; then python -m IPython.external.mathjax; fi'
 install:
