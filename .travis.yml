@@ -25,6 +25,7 @@ install:
     - pip install coveralls
     - pip install -f travis-wheels/wheelhouse file://$PWD#egg=ipython[all]
 script:
+    - 'if [[ -z "$GROUP" ]]; then python -m compileall *; fi'
     - cd /tmp && iptest $GROUP --coverage xml && cd -
 
 matrix:
