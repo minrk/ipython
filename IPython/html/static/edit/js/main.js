@@ -68,6 +68,10 @@ require([
     utils.load_extensions_from_config(common_config);
     editor.load();
     page.show();
+    
+    window.onresize = function () {
+        editor.resize_codemirror();
+    }
 
     window.onbeforeunload = function () {
         if (editor.save_enabled && !editor.codemirror.isClean(editor.generation)) {

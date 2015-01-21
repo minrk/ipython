@@ -63,13 +63,19 @@ function($,
         lineWrapping: true,
     };
     
-    Editor.prototype.load = function() {
+    Editor.prototype.resize_codemirror = function () {
+        var el = $(this.codemirror.getWrapperElement());
+        el.height(el.parent().height());
+    }
+    
+    Editor.prototype.load = function () {
         /** load the file */
         var that = this;
         var cm = this.codemirror;
         return this.contents.get(this.file_path, {type: 'file', format: 'text'})
             .then(function(model) {
                 cm.setValue(model.content);
+                this.resize_codemirror();
 
                 // Setting the file's initial value creates a history entry,
                 // which we don't want.

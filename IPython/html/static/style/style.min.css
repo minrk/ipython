@@ -8755,12 +8755,19 @@ ul#new-menu {
 #texteditor-backdrop {
   padding-top: 20px;
   padding-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 @media not print {
   #texteditor-backdrop {
-    min-height: 100vh;
     background-color: #eeeeee;
   }
+}
+#texteditor-backdrop #texteditor-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 @media print {
   #texteditor-backdrop #texteditor-container .CodeMirror-gutter,

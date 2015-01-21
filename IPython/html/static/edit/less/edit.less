@@ -9,12 +9,18 @@
     padding-top: @page-header-padding;
     padding-bottom: @page-header-padding;
     
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    
     @media not print{
-        min-height: @page-backdrop-height;
         background-color: @page-backdrop-color;
     }
 
     #texteditor-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
         .CodeMirror-gutter, .CodeMirror-gutters {
             @media print {
                 background-color: @body-bg;
