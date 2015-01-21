@@ -44,7 +44,7 @@ define([
          * Main scripts should call this method after styling everything.
          * TODO: selector are hardcoded, pass as constructor argument
          */
-        $('div#site').css('display','block');
+        $('div#site').css('display', 'flex');
     };
 
     Page.prototype._resize_header = function() {
