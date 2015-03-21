@@ -177,6 +177,7 @@ flags.update(frontend_flags)
 
 aliases = dict(base_aliases)
 aliases.update(shell_aliases)
+aliases.update({'x': 'TerminalIPythonApp.test_list'})
 
 #-----------------------------------------------------------------------------
 # Main classes and functions
@@ -202,6 +203,10 @@ class TerminalIPythonApp(BaseIPythonApplication, InteractiveShellApp):
     description = usage.cl_usage
     crash_handler_class = IPAppCrashHandler
     examples = _examples
+    
+    test_list = List(config=True)
+    def _test_list_changed(self, name, old, new):
+        print('test list: %r' % new)
 
     flags = Dict(flags)
     aliases = Dict(aliases)

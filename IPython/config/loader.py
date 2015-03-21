@@ -17,7 +17,7 @@ from IPython.utils.path import filefind, get_ipython_dir
 from IPython.utils import py3compat
 from IPython.utils.encoding import DEFAULT_ENCODING
 from IPython.utils.py3compat import unicode_type, iteritems
-from IPython.utils.traitlets import HasTraits, List, Any
+from IPython.utils.traitlets import HasTraits, List, Any, Set, Tuple
 
 #-----------------------------------------------------------------------------
 # Exceptions
@@ -233,11 +233,6 @@ class Config(dict):
     
     def copy(self):
         return type(self)(dict.copy(self))
-        # copy nested config objects
-        for k, v in self.items():
-            if isinstance(v, Config):
-                new_config[k] = v.copy()
-        return new_config
 
     def __copy__(self):
         return self.copy()
@@ -689,7 +684,7 @@ class KeyValueConfigLoader(CommandLineConfigLoader):
 class ArgParseConfigLoader(CommandLineConfigLoader):
     """A loader that uses the argparse module to load from the command line."""
 
-    def __init__(self, argv=None, aliases=None, flags=None, log=None,  *parser_args, **parser_kw):
+    def __init__(self, argv=None, aliases=None, flags=None, log=None,  classes=None, *parser_args, **parser_kw):
         """Create a config loader for use with argparse.
 
         Parameters
@@ -717,6 +712,12 @@ class ArgParseConfigLoader(CommandLineConfigLoader):
         if argv is None:
             argv = sys.argv[1:]
         self.argv = argv
+        
+        # build 'Class': Class dict from Application.classes list
+        self.classes = {}
+        if classes:
+            for cls in classes:
+                self.classes[cls.__name__] = cls
         self.aliases = aliases or {}
         self.flags = flags or {}
 
@@ -788,15 +789,31 @@ class KVArgParseConfigLoader(ArgParseConfigLoader):
             flags = self.flags
         paa = self.parser.add_argument
         for key,value in iteritems(aliases):
+            classname, traitname = value.split('.')
+            cls = self.classes.get(classname)
+            # print(value, classname, traitname, self.classes, cls)
+            arg_type = unicode_type
+            nargs = None
+            if cls:
+                t = cls.class_traits()[traitname]
+                if isinstance(t, (List, Set, Tuple)):
+                    nargs = '+'
+                    # arg_type = un #lambda x: x.split(',')
+                # elif isinstance(t, Set):
+                #     arg_type = set
+                #     nargs = '+'
+                # elif isinstance(t, Tuple):
+                #     arg_type = tuple
+                #     nargs = '+'
+                # else:
+                #     nargs = None
             if key in flags:
                 # flags
                 nargs = '?'
-            else:
-                nargs = None
             if len(key) is 1:
-                paa('-'+key, '--'+key, type=unicode_type, dest=value, nargs=nargs)
+                paa('-'+key, '--'+key, type=arg_type, dest=value, nargs=nargs)
             else:
-                paa('--'+key, type=unicode_type, dest=value, nargs=nargs)
+                paa('--'+key, type=arg_type, dest=value, nargs=nargs)
         for key, (value, help) in iteritems(flags):
             if key in self.aliases:
                 #
@@ -820,9 +837,17 @@ class KVArgParseConfigLoader(ArgParseConfigLoader):
             if v is None:
                 # it was a flag that shares the name of an alias
                 subcs.append(self.alias_flags[k])
-            else:
+            elif isinstance(v, str):
                 # eval the KV assignment
                 self._exec_config_str(k, v)
+            else:
+                parts = k.split('.')
+                subcs.append({
+                    parts[0]: {
+                        parts[1]: v
+                    }
+                })
+                print(k,v)
 
         for subc in subcs:
             self._load_flag(subc)
