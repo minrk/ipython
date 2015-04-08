@@ -289,6 +289,12 @@ install_requires = [
     'decorator',
     'pickleshare',
     'simplegeneric>0.8',
+    'traitlets',
+]
+
+setuptools_extra_args['dependency_links'] = [
+    'git+https://github.com/ipython/ipython_genutils.git#egg=ipython_genutils',
+    'git+https://github.com/ipython/traitlets.git#egg=traitlets]',
 ]
 
 # add platform-specific dependencies
