@@ -23,7 +23,7 @@ from tornado import web
 from IPython.html.utils import url_path_join, url_escape
 from IPython.utils.jsonutil import date_default
 
-from IPython.html.base.handlers import (IPythonHandler, json_errors,
+from IPython.html.base.handlers import (APIHandler, json_errors,
                                     notebook_path_regex, path_regex,
                                     notebook_name_regex)
 
@@ -32,7 +32,7 @@ from IPython.html.base.handlers import (IPythonHandler, json_errors,
 #-----------------------------------------------------------------------------
 
 
-class NotebookHandler(IPythonHandler):
+class NotebookHandler(APIHandler):
 
     SUPPORTED_METHODS = (u'GET', u'PUT', u'PATCH', u'POST', u'DELETE')
 
@@ -56,6 +56,7 @@ class NotebookHandler(IPythonHandler):
             location = self.notebook_location(model['name'], model['path'])
             self.set_header('Location', location)
         self.set_header('Last-Modified', model['last_modified'])
+        self.set_header('Content-Type', 'application/json')
         self.finish(json.dumps(model, default=date_default))
     
     @web.authenticated
@@ -222,7 +223,7 @@ class NotebookHandler(IPythonHandler):
         self.finish()
 
 
-class NotebookCheckpointsHandler(IPythonHandler):
+class NotebookCheckpointsHandler(APIHandler):
     
     SUPPORTED_METHODS = ('GET', 'POST')
     
@@ -249,7 +250,7 @@ class NotebookCheckpointsHandler(IPythonHandler):
         self.finish(data)
 
 
-class ModifyNotebookCheckpointsHandler(IPythonHandler):
+class ModifyNotebookCheckpointsHandler(APIHandler):
     
     SUPPORTED_METHODS = ('POST', 'DELETE')
     

@@ -24,7 +24,7 @@ from zmq.utils import jsonapi
 from IPython.utils.jsonutil import date_default
 from IPython.html.utils import url_path_join, url_escape
 
-from ...base.handlers import IPythonHandler, json_errors
+from ...base.handlers import APIHandler, json_errors
 from ...base.zmqhandlers import AuthenticatedZMQStreamHandler
 
 #-----------------------------------------------------------------------------
@@ -32,7 +32,7 @@ from ...base.zmqhandlers import AuthenticatedZMQStreamHandler
 #-----------------------------------------------------------------------------
 
 
-class MainKernelHandler(IPythonHandler):
+class MainKernelHandler(APIHandler):
 
     @web.authenticated
     @json_errors
@@ -52,7 +52,7 @@ class MainKernelHandler(IPythonHandler):
         self.finish(jsonapi.dumps(model))
 
 
-class KernelHandler(IPythonHandler):
+class KernelHandler(APIHandler):
 
     SUPPORTED_METHODS = ('DELETE', 'GET')
 
@@ -73,7 +73,7 @@ class KernelHandler(IPythonHandler):
         self.finish()
 
 
-class KernelActionHandler(IPythonHandler):
+class KernelActionHandler(APIHandler):
 
     @web.authenticated
     @json_errors

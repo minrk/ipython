@@ -51,8 +51,21 @@ non_alphanum = re.compile(r'[^A-Za-z0-9]')
 class AuthenticatedHandler(web.RequestHandler):
     """A RequestHandler with an authenticated user."""
 
+    @property
+    def content_security_policy(self):
+        """The default Content-Security-Policy header
+        
+        Can be overridden by defining Content-Security-Policy in settings['headers']
+        """
+        return '; '.join([
+            "frame-ancestors 'self'"
+        ])
+
     def set_default_headers(self):
         headers = self.settings.get('headers', {})
+
+        if "Content-Security-Policy" not in headers:
+            headers["Content-Security-Policy"] = self.content_security_policy
 
         if "X-Frame-Options" not in headers:
             headers["X-Frame-Options"] = "SAMEORIGIN"
@@ -280,6 +293,20 @@ class IPythonHandler(AuthenticatedHandler):
         
         self.write(html)
         
+class APIHandler(IPythonHandler):
+    """Base class for API handlers"""
+    
+    @property
+    def content_security_policy(self):
+        csp = '; '.join([
+                super(APIHandler, self).content_security_policy,
+                "default-src 'none'",
+            ])
+        return csp
+    
+    def finish(self, *args, **kwargs):
+        self.set_header('Content-Type', 'application/json')
+        return super(APIHandler, self).finish(*args, **kwargs)
 
 
 class Template404(IPythonHandler):
@@ -339,6 +366,7 @@ def json_errors(method):
             message = e.log_message
             self.log.warn(message)
             self.set_status(e.status_code)
+            self.set_header('Content-Type', 'application/json')
             self.finish(json.dumps(dict(message=message)))
         except Exception:
             self.log.error("Unhandled error in API request", exc_info=True)
@@ -348,6 +376,7 @@ def json_errors(method):
             self.set_status(status)
             tb_text = ''.join(traceback.format_exception(t, value, tb))
             reply = dict(message=message, traceback=tb_text)
+            self.set_header('Content-Type', 'application/json')
             self.finish(json.dumps(reply))
         else:
             return result
