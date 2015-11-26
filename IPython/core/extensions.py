@@ -22,6 +22,8 @@ except ImportError :
 # Main class
 #-----------------------------------------------------------------------------
 
+from threading import current_thread
+
 class ExtensionManager(Configurable):
     """A class to manage IPython extensions.
 
@@ -60,6 +62,7 @@ class ExtensionManager(Configurable):
         self.loaded = set()
 
     def __del__(self):
+        print('del', current_thread(), self.shell, file=sys.__stderr__)
         self.shell.on_trait_change(
             self._on_ipython_dir_changed, 'ipython_dir', remove=True
         )
