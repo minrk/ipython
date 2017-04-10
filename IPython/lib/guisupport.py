@@ -78,9 +78,9 @@ def get_app_wx(*args, **kwargs):
 
 def is_event_loop_running_wx(app=None):
     """Is the wx event loop running."""
-    # New way: check attribute on shell instance
+    # New way: check attribute on shell instance (if app is not specified)
     ip = get_ipython()
-    if ip is not None:
+    if app is None and ip is not None:
         if ip.active_eventloop and ip.active_eventloop == 'wx':
             return True
         # Fall through to checking the application, because Wx has a native way
@@ -121,9 +121,9 @@ def get_app_qt4(*args, **kwargs):
 
 def is_event_loop_running_qt4(app=None):
     """Is the qt4 event loop running."""
-    # New way: check attribute on shell instance
+    # New way: check attribute on shell instance (if app is not specified)
     ip = get_ipython()
-    if ip is not None:
+    if app is None and ip is not None:
         return ip.active_eventloop and ip.active_eventloop.startswith('qt')
 
     # Old way: check attribute on QApplication singleton
